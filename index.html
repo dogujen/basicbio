@@ -53,7 +53,7 @@
                 Discord Status
             </h2>
             <div id="discord-status" class="flex flex-col md:flex-row items-center md:items-start gap-6">
-                <div class="flex flex-col gap-2">
+                <div class="flex flex-col gap-2 shrink-0 md:max-w-[220px]">
                     <div class="flex items-center gap-3">
                         <div class="relative">
                             <img id="discord-avatar" src="" alt="Discord Avatar" class="w-20 h-20 rounded-full border-4 border-white/20 hidden">
@@ -219,27 +219,31 @@
                     const realActivities = user.activities?.filter(a => a.type !== 4) || [];
                     if (realActivities.length > 0) {
                         const activity = realActivities[0];
-                        let activityHTML = '<div class="bg-white/10 rounded-lg p-4">';
+                        const typeLabels = { 0: 'Playing', 1: 'Streaming', 3: 'Watching', 5: 'Competing' };
+                        const typeIcons = { 0: 'fa-gamepad', 1: 'fa-twitch', 3: 'fa-tv', 5: 'fa-trophy' };
+                        let activityHTML = '<div class="bg-white/10 rounded-xl p-5 w-full">';
                         
                         if (activity.type === 2) { // Spotify
                             activityHTML += `
-                                <div class="flex items-center gap-3">
-                                    <i class="fab fa-spotify text-green-400 text-2xl"></i>
-                                    <div class="flex-1">
-                                        <p class="text-sm opacity-75">Listening to Spotify</p>
-                                        <p class="font-semibold">${activity.details || 'Unknown Track'}</p>
-                                        <p class="text-sm opacity-75">${activity.state || ''}</p>
+                                <div class="flex items-center gap-4">
+                                    <i class="fab fa-spotify text-green-400 text-3xl"></i>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-xs opacity-75 uppercase tracking-wide">Listening to Spotify</p>
+                                        <p class="font-semibold text-base mt-1 truncate">${activity.details || 'Unknown Track'}</p>
+                                        <p class="text-sm opacity-75 truncate">${activity.state || ''}</p>
                                     </div>
                                 </div>
                             `;
                         } else if (activity.name) {
+                            const label = typeLabels[activity.type] || 'Playing';
+                            const icon = typeIcons[activity.type] || 'fa-gamepad';
                             activityHTML += `
-                                <div class="flex items-center gap-3">
-                                    <i class="fas fa-gamepad text-purple-400 text-2xl"></i>
-                                    <div class="flex-1">
-                                        <p class="text-sm opacity-75">Playing</p>
-                                        <p class="font-semibold">${activity.name}</p>
-                                        ${activity.details ? `<p class="text-sm opacity-75">${activity.details}</p>` : ''}
+                                <div class="flex items-center gap-4">
+                                    <i class="fas ${icon} text-purple-400 text-3xl"></i>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-xs opacity-75 uppercase tracking-wide">${label}</p>
+                                        <p class="font-semibold text-base mt-1 truncate">${activity.name}</p>
+                                        ${activity.details ? `<p class="text-sm opacity-75 mt-0.5 truncate">${activity.details}</p>` : ''}
                                     </div>
                                 </div>
                             `;
