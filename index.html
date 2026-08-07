@@ -14,27 +14,38 @@
         .pulse-slow {
             animation: pulse-slow 2s ease-in-out infinite;
         }
-        /* Dark theme colors */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.35s ease-out;
+        }
         :root { color-scheme: dark; }
         .card-dark { background: rgba(20,20,20,0.7); border-color: rgba(255,255,255,0.08); }
         .card-dark:hover { background: rgba(32,32,32,0.9); }
         .bubble {
             position: relative;
-            background: rgba(99, 102, 241, 0.12);
-            border: 1px solid rgba(99, 102, 241, 0.18);
-            border-radius: 16px;
+            background: rgba(99, 102, 241, 0.10);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            border-radius: 14px;
+            max-width: 260px;
+            line-height: 1.4;
         }
         .bubble::before {
             content: '';
             position: absolute;
-            top: -7px;
-            left: 24px;
-            width: 12px;
-            height: 12px;
-            background: rgba(99, 102, 241, 0.12);
-            border-top: 1px solid rgba(99, 102, 241, 0.18);
-            border-left: 1px solid rgba(99, 102, 241, 0.18);
+            top: -6px;
+            left: 22px;
+            width: 10px;
+            height: 10px;
+            background: rgba(99, 102, 241, 0.10);
+            border-top: 1px solid rgba(99, 102, 241, 0.15);
+            border-left: 1px solid rgba(99, 102, 241, 0.15);
             transform: rotate(45deg);
+        }
+        .progress-bar {
+            transition: width 30s linear;
         }
     </style>
 </head>
@@ -52,22 +63,25 @@
                 <i class="fab fa-discord text-indigo-300"></i>
                 Discord Status
             </h2>
-            <div id="discord-status" class="flex flex-col md:flex-row items-center md:items-start gap-6">
-                <div class="flex flex-col gap-2 shrink-0 md:max-w-[220px]">
+            <div id="discord-status" class="flex flex-col md:flex-row gap-6">
+                <!-- Left: User info -->
+                <div class="flex flex-col items-center md:items-start gap-2.5 shrink-0">
                     <div class="flex items-center gap-3">
-                        <div class="relative">
-                            <img id="discord-avatar" src="" alt="Discord Avatar" class="w-20 h-20 rounded-full border-4 border-white/20 hidden">
-                            <div id="status-indicator" class="absolute bottom-0 right-0 w-6 h-6 rounded-full border-4 border-white"></div>
+                        <div class="relative shrink-0">
+                            <div id="avatar-ring" class="absolute -inset-[3px] rounded-full opacity-0 transition-opacity duration-500"></div>
+                            <img id="discord-avatar" src="" alt="Discord Avatar" class="relative w-[68px] h-[68px] rounded-full hidden z-10">
                         </div>
-                        <div id="discord-info">
-                            <p class="text-lg font-semibold" id="discord-username">Loading...</p>
-                            <p class="text-sm opacity-75" id="discord-status-text">Fetching status...</p>
+                        <div class="min-w-0">
+                            <p class="text-lg font-bold leading-tight truncate" id="discord-username">Loading...</p>
+                            <span id="status-badge" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium mt-1">Fetching...</span>
+                            <div id="platform-icons" class="flex items-center gap-1.5 mt-1.5 text-white/40 text-xs"></div>
                         </div>
                     </div>
-                    <p class="bubble px-4 py-2 text-sm hidden" id="discord-custom-status"></p>
+                    <p class="bubble px-3 py-2 text-sm hidden fade-in" id="discord-custom-status"></p>
                 </div>
-                <div id="discord-activity" class="flex-1 w-full">
-                    <!-- Activity will be inserted here -->
+                <!-- Right: Activity -->
+                <div id="discord-activity" class="flex-1 min-w-0 w-full">
+                    <!-- Activity renders here -->
                 </div>
             </div>
         </div>
@@ -172,85 +186,169 @@
             HTB_PROFILE_API
         ];
 
+        // ── Helpers ──────────────────────────────────────────────
+        function assetUrl(appId, key) {
+            if (!key) return null;
+            if (key.startsWith('mp:external/')) {
+                const rest = key.slice('mp:external/'.length);
+                const slash = rest.indexOf('/');
+                if (slash === -1) return null;
+                return `https://media.discordapp.net/external/${rest.slice(0, slash)}/${rest.slice(slash + 1)}`;
+            }
+            if (appId) return `https://cdn.discordapp.com/app-assets/${appId}/${key}.png`;
+            return null;
+        }
+
+        function formatElapsed(startMs) {
+            const diff = Date.now() - startMs;
+            if (diff < 0) return '';
+            const h = Math.floor(diff / 3600000);
+            const m = Math.floor((diff % 3600000) / 60000);
+            if (h > 0) return `${h}h ${m}m elapsed`;
+            if (m > 0) return `${m}m elapsed`;
+            return 'just started';
+        }
+
+        function formatSpotifyRemaining(startMs, endMs) {
+            const now = Date.now();
+            const remaining = endMs - now;
+            const total = endMs - startMs;
+            if (remaining <= 0 || total <= 0) return null;
+            const pct = Math.min(100, Math.max(0, ((now - startMs) / total) * 100));
+            const min = Math.floor(remaining / 60000);
+            const sec = Math.floor((remaining % 60000) / 1000);
+            return { pct, text: `-${min}:${sec.toString().padStart(2, '0')}` };
+        }
+
+        const TYPE_LABEL = { 0: 'Playing', 1: 'Streaming', 3: 'Watching', 5: 'Competing' };
+        const TYPE_ICON  = { 0: 'fa-gamepad', 1: 'fa-twitch', 3: 'fa-tv', 5: 'fa-trophy' };
+        const STATUS_RING = { online: 'bg-green-500', idle: 'bg-yellow-500', dnd: 'bg-red-500', offline: 'bg-gray-500' };
+
+        function renderActivity(activity) {
+            if (activity.type === 2) return renderSpotify(activity);
+
+            const label = TYPE_LABEL[activity.type] || 'Playing';
+            const icon  = TYPE_ICON[activity.type] || 'fa-gamepad';
+            const img   = assetUrl(activity.application_id, activity.assets?.large_image);
+            const elapsed = activity.timestamps?.start ? formatElapsed(activity.timestamps.start) : '';
+
+            return `
+                <div class="bg-white/5 rounded-xl p-4 border border-white/5 w-full fade-in">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-wider opacity-50 font-medium">
+                            <i class="fas ${icon}"></i> ${label}
+                        </span>
+                        ${elapsed ? `<span class="text-[11px] opacity-40 tabular-nums">${elapsed}</span>` : ''}
+                    </div>
+                    <div class="flex gap-3.5">
+                        ${img ? `<img src="${img}" class="w-[60px] h-[60px] rounded-lg object-cover shrink-0 bg-white/5" onerror="this.remove()" alt="">` : ''}
+                        <div class="flex-1 min-w-0">
+                            <p class="font-semibold text-[15px] leading-snug truncate">${activity.name}</p>
+                            ${activity.details ? `<p class="text-[13px] opacity-70 truncate mt-0.5">${activity.details}</p>` : ''}
+                            ${activity.state   ? `<p class="text-[13px] opacity-50 truncate mt-0.5">${activity.state}</p>`   : ''}
+                            ${activity.assets?.large_text ? `<p class="text-[11px] opacity-40 truncate mt-1">${activity.assets.large_text}</p>` : ''}
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        function renderSpotify(activity) {
+            const img = assetUrl(null, activity.assets?.large_image);
+            const prog = activity.timestamps
+                ? formatSpotifyRemaining(activity.timestamps.start, activity.timestamps.end)
+                : null;
+
+            return `
+                <div class="bg-green-500/5 rounded-xl p-4 border border-green-500/10 w-full fade-in">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-green-400 font-medium">
+                            <i class="fab fa-spotify"></i> Listening to Spotify
+                        </span>
+                        ${prog ? `<span class="text-[11px] text-green-400/50 tabular-nums font-mono">${prog.text}</span>` : ''}
+                    </div>
+                    <div class="flex gap-3.5">
+                        ${img ? `<img src="${img}" class="w-[60px] h-[60px] rounded-lg object-cover shrink-0 bg-white/5" onerror="this.remove()" alt="">` : ''}
+                        <div class="flex-1 min-w-0">
+                            <p class="font-semibold text-[15px] leading-snug truncate">${activity.details || 'Unknown Track'}</p>
+                            <p class="text-[13px] opacity-70 truncate mt-0.5">${activity.state || ''}</p>
+                            ${prog ? `
+                                <div class="mt-2.5 h-1 bg-white/10 rounded-full overflow-hidden">
+                                    <div class="h-full bg-green-400 rounded-full progress-bar" style="width:${prog.pct}%"></div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        function renderPlatforms(user) {
+            const icons = [];
+            if (user.active_on_discord_desktop)  icons.push('<i class="fas fa-desktop" title="Desktop"></i>');
+            if (user.active_on_discord_mobile)   icons.push('<i class="fas fa-mobile-alt" title="Mobile"></i>');
+            if (user.active_on_discord_web)      icons.push('<i class="fas fa-globe" title="Web"></i>');
+            return icons.join('');
+        }
+
+        // ── Fetch ───────────────────────────────────────────────
         async function fetchDiscordStatus() {
             try {
                 const response = await fetch(LANYARD_API);
                 const data = await response.json();
-                
+
                 if (data.success && data.data) {
                     const user = data.data;
-                    
-                    // Update avatar
-                    const avatar = document.getElementById('discord-avatar');
-                    avatar.src = `https://cdn.discordapp.com/avatars/${user.discord_user.id}/${user.discord_user.avatar}.png?size=128`;
-                    avatar.classList.remove('hidden');
-                    
-                    // Update username and custom status
-                    document.getElementById('discord-username').textContent = 
+
+                    // Avatar
+                    const av = document.getElementById('discord-avatar');
+                    av.src = `https://cdn.discordapp.com/avatars/${user.discord_user.id}/${user.discord_user.avatar}.png?size=128`;
+                    av.classList.remove('hidden');
+
+                    // Avatar ring — status-colored
+                    const ring = document.getElementById('avatar-ring');
+                    ring.className = `absolute -inset-[3px] rounded-full opacity-100 transition-opacity duration-500 ${STATUS_RING[user.discord_status] || 'bg-gray-500'}`;
+
+                    // Username
+                    document.getElementById('discord-username').textContent =
                         user.discord_user.global_name || user.discord_user.username;
-                    
-                    // Update custom status text
+
+                    // Status badge
+                    const badge = document.getElementById('status-badge');
+                    const statusColor = {
+                        online: 'bg-green-500/15 text-green-400',
+                        idle: 'bg-yellow-500/15 text-yellow-400',
+                        dnd: 'bg-red-500/15 text-red-400',
+                        offline: 'bg-gray-500/15 text-gray-400'
+                    };
+                    badge.className = `inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium mt-1 ${statusColor[user.discord_status] || 'bg-gray-500/15 text-gray-400'}`;
+                    badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${STATUS_RING[user.discord_status] || 'bg-gray-500'}"></span>${user.discord_status.charAt(0).toUpperCase() + user.discord_status.slice(1)}`;
+
+                    // Platform icons
+                    document.getElementById('platform-icons').innerHTML = renderPlatforms(user);
+
+                    // Custom status bubble
                     const customStatus = user.activities?.find(a => a.type === 4);
                     const customStatusEl = document.getElementById('discord-custom-status');
                     if (customStatus && customStatus.state) {
                         const emoji = customStatus.emoji?.name || '';
-                        customStatusEl.textContent = `${emoji} ${customStatus.state}`;
-                        customStatusEl.classList.remove('hidden');
+                        const prev = customStatusEl.textContent;
+                        const next = `${emoji} ${customStatus.state}`;
+                        if (prev !== next) {
+                            customStatusEl.textContent = next;
+                            customStatusEl.classList.remove('hidden');
+                            // re-trigger animation
+                            customStatusEl.classList.remove('fade-in');
+                            void customStatusEl.offsetWidth;
+                            customStatusEl.classList.add('fade-in');
+                        }
                     } else {
                         customStatusEl.classList.add('hidden');
                     }
-                    
-                    // Update status indicator
-                    const statusIndicator = document.getElementById('status-indicator');
-                    const statusColors = {
-                        'online': 'bg-green-500',
-                        'idle': 'bg-yellow-500',
-                        'dnd': 'bg-red-500',
-                        'offline': 'bg-gray-500'
-                    };
-                    statusIndicator.className = `absolute bottom-0 right-0 w-6 h-6 rounded-full border-4 border-white ${statusColors[user.discord_status] || 'bg-gray-500'}`;
-                    
-                    // Update status text
-                    const statusText = user.discord_status.charAt(0).toUpperCase() + user.discord_status.slice(1);
-                    document.getElementById('discord-status-text').textContent = statusText;
-                    
-                    // Update activity
+
+                    // Activity
                     const activityContainer = document.getElementById('discord-activity');
                     const realActivities = user.activities?.filter(a => a.type !== 4) || [];
                     if (realActivities.length > 0) {
-                        const activity = realActivities[0];
-                        const typeLabels = { 0: 'Playing', 1: 'Streaming', 3: 'Watching', 5: 'Competing' };
-                        const typeIcons = { 0: 'fa-gamepad', 1: 'fa-twitch', 3: 'fa-tv', 5: 'fa-trophy' };
-                        let activityHTML = '<div class="bg-white/10 rounded-xl p-5 w-full">';
-                        
-                        if (activity.type === 2) { // Spotify
-                            activityHTML += `
-                                <div class="flex items-center gap-4">
-                                    <i class="fab fa-spotify text-green-400 text-3xl"></i>
-                                    <div class="flex-1 min-w-0">
-                                        <p class="text-xs opacity-75 uppercase tracking-wide">Listening to Spotify</p>
-                                        <p class="font-semibold text-base mt-1 truncate">${activity.details || 'Unknown Track'}</p>
-                                        <p class="text-sm opacity-75 truncate">${activity.state || ''}</p>
-                                    </div>
-                                </div>
-                            `;
-                        } else if (activity.name) {
-                            const label = typeLabels[activity.type] || 'Playing';
-                            const icon = typeIcons[activity.type] || 'fa-gamepad';
-                            activityHTML += `
-                                <div class="flex items-center gap-4">
-                                    <i class="fas ${icon} text-purple-400 text-3xl"></i>
-                                    <div class="flex-1 min-w-0">
-                                        <p class="text-xs opacity-75 uppercase tracking-wide">${label}</p>
-                                        <p class="font-semibold text-base mt-1 truncate">${activity.name}</p>
-                                        ${activity.details ? `<p class="text-sm opacity-75 mt-0.5 truncate">${activity.details}</p>` : ''}
-                                    </div>
-                                </div>
-                            `;
-                        }
-                        
-                        activityHTML += '</div>';
-                        activityContainer.innerHTML = activityHTML;
+                        activityContainer.innerHTML = renderActivity(realActivities[0]);
                     } else {
                         activityContainer.innerHTML = '';
                     }
@@ -258,7 +356,6 @@
             } catch (error) {
                 console.error('Error fetching Discord status:', error);
                 document.getElementById('discord-username').textContent = 'Unable to load';
-                document.getElementById('discord-status-text').textContent = 'Please try again later';
             }
         }
 
