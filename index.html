@@ -223,6 +223,7 @@
         const TYPE_LABEL = { 0: 'Playing', 1: 'Streaming', 3: 'Watching', 5: 'Competing' };
         const TYPE_ICON  = { 0: 'fa-gamepad', 1: 'fa-twitch', 3: 'fa-tv', 5: 'fa-trophy' };
         const STATUS_RING = { online: 'bg-green-500', idle: 'bg-yellow-500', dnd: 'bg-red-500', offline: 'bg-gray-500' };
+        const STATUS_LABEL = { online: 'Online', idle: 'Idle', dnd: 'Do Not Disturb', offline: 'Offline' };
 
         function renderActivity(activity) {
             if (activity.type === 2) return renderSpotify(activity);
@@ -320,7 +321,7 @@
                         offline: 'bg-gray-500/15 text-gray-400'
                     };
                     badge.className = `inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium mt-1 ${statusColor[user.discord_status] || 'bg-gray-500/15 text-gray-400'}`;
-                    badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${STATUS_RING[user.discord_status] || 'bg-gray-500'}"></span>${user.discord_status.charAt(0).toUpperCase() + user.discord_status.slice(1)}`;
+                    badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${STATUS_RING[user.discord_status] || 'bg-gray-500'}"></span>${STATUS_LABEL[user.discord_status] || user.discord_status}`;
 
                     // Platform icons
                     document.getElementById('platform-icons').innerHTML = renderPlatforms(user);
