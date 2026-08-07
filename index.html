@@ -42,9 +42,9 @@
                     </div>
                     <div id="discord-info">
                         <p class="text-lg font-semibold" id="discord-username">Loading...</p>
+                        <p class="text-sm opacity-75 hidden" id="discord-custom-status"></p>
                         <p class="text-sm opacity-75" id="discord-status-text">Fetching status...</p>
                     </div>
-                </div>
                 <div id="discord-activity" class="flex-1 w-full">
                     <!-- Activity will be inserted here -->
                 </div>
@@ -164,9 +164,20 @@
                     avatar.src = `https://cdn.discordapp.com/avatars/${user.discord_user.id}/${user.discord_user.avatar}.png?size=128`;
                     avatar.classList.remove('hidden');
                     
-                    // Update username
+                    // Update username and custom status
                     document.getElementById('discord-username').textContent = 
                         user.discord_user.global_name || user.discord_user.username;
+                    
+                    // Update custom status text
+                    const customStatus = user.activities?.find(a => a.type === 4);
+                    const customStatusEl = document.getElementById('discord-custom-status');
+                    if (customStatus && customStatus.state) {
+                        const emoji = customStatus.emoji?.name || '';
+                        customStatusEl.textContent = `${emoji} ${customStatus.state}`;
+                        customStatusEl.classList.remove('hidden');
+                    } else {
+                        customStatusEl.classList.add('hidden');
+                    }
                     
                     // Update status indicator
                     const statusIndicator = document.getElementById('status-indicator');
