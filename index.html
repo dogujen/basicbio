@@ -1,497 +1,1848 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doğu Kervan - Blog</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        @keyframes pulse-slow {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        .pulse-slow {
-            animation: pulse-slow 2s ease-in-out infinite;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(4px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        .fade-in {
-            animation: fadeIn 0.35s ease-out;
-        }
-        :root { color-scheme: dark; }
-        .card-dark { background: rgba(20,20,20,0.7); border-color: rgba(255,255,255,0.08); }
-        .card-dark:hover { background: rgba(32,32,32,0.9); }
-        .bubble {
-            position: relative;
-            background: rgba(99, 102, 241, 0.10);
-            border: 1px solid rgba(99, 102, 241, 0.15);
-            border-radius: 14px;
-            max-width: 260px;
-            line-height: 1.4;
-        }
-        .bubble::before {
-            content: '';
-            position: absolute;
-            top: -6px;
-            left: 22px;
-            width: 10px;
-            height: 10px;
-            background: rgba(99, 102, 241, 0.10);
-            border-top: 1px solid rgba(99, 102, 241, 0.15);
-            border-left: 1px solid rgba(99, 102, 241, 0.15);
-            transform: rotate(45deg);
-        }
-        .progress-bar {
-            transition: width 30s linear;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Doğu Kervan — Masaüstü</title>
+<meta name="description" content="Doğu Kervan — Computer Engineering Student">
+<script>
+/* Mobil / tablet / dokunmatik cihazlar klasik sürüme gider */
+(function () {
+  if (location.search.indexOf('classic') !== -1) { location.replace('classic.html'); return; }
+  var ua = navigator.userAgent;
+  var uaMobile = /Android|iPhone|iPod|iPad|Windows Phone|IEMobile|Opera Mini|Mobile|Tablet|Silk|Kindle/i.test(ua);
+  var touchMac = navigator.maxTouchPoints > 1 && /Macintosh/.test(ua);
+  var fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  var wide = window.matchMedia('(min-width: 1024px)').matches;
+  if (uaMobile || touchMac || !fine || !wide) location.replace('classic.html');
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+/* ─────────────── Base ─────────────── */
+*{box-sizing:border-box}
+:root{
+  --accent:#0078d4;
+  --taskbar-h:48px;
+  --r-win:10px;
+  --r-ctl:6px;
+  --text:#f3f3f3;
+  --text-dim:rgba(255,255,255,.62);
+  --win-bg:rgba(28,28,28,.88);
+  --win-head:rgba(34,34,34,.94);
+  --panel-bg:rgba(38,38,38,.8);
+  --solid:#202020;
+  --stroke:rgba(255,255,255,.08);
+  --stroke-strong:rgba(255,255,255,.14);
+  --hover:rgba(255,255,255,.06);
+  --active:rgba(255,255,255,.1);
+  --shadow:0 32px 80px rgba(0,0,0,.55),0 2px 12px rgba(0,0,0,.35);
+  --desk-text:#fff;
+  --desk-shadow:0 1px 4px rgba(0,0,0,.7);
+}
+:root[data-theme="light"]{
+  --text:#1b1b1b;
+  --text-dim:rgba(0,0,0,.6);
+  --win-bg:rgba(249,249,249,.86);
+  --win-head:rgba(249,249,249,.94);
+  --panel-bg:rgba(243,243,243,.82);
+  --solid:#f3f3f3;
+  --stroke:rgba(0,0,0,.07);
+  --stroke-strong:rgba(0,0,0,.12);
+  --hover:rgba(0,0,0,.045);
+  --active:rgba(0,0,0,.075);
+  --shadow:0 32px 80px rgba(0,0,0,.25),0 2px 12px rgba(0,0,0,.14);
+}
+html,body{height:100%}
+body{
+  margin:0;overflow:hidden;background:#04060f;color:var(--text);
+  font-family:"Segoe UI Variable Display","Segoe UI",system-ui,-apple-system,"Inter",sans-serif;
+  -webkit-font-smoothing:antialiased;user-select:none;
+}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+a{color:inherit}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:rgba(140,140,140,.45);border-radius:6px;border:2px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-thumb:hover{background:rgba(160,160,160,.7);background-clip:content-box}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ─────────────── Wallpaper ─────────────── */
+#desktop{position:fixed;inset:0 0 var(--taskbar-h) 0;overflow:hidden}
+#wall{position:absolute;inset:0;background:#05060f url('./wallpaper.jpg') center/cover no-repeat}
+#wall .veil{position:absolute;inset:0;background:
+  linear-gradient(180deg,rgba(0,0,0,.42),transparent 24%,transparent 62%,rgba(0,0,0,.55)),
+  radial-gradient(130% 100% at 88% 8%,transparent 35%,rgba(0,0,0,.35) 100%)}
+
+/* ─────────────── Desktop icons ─────────────── */
+#desk-icons{position:absolute;inset:0;z-index:1;pointer-events:none}
+.desk-icon{position:absolute;width:84px;padding:7px 4px 6px;border-radius:5px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;pointer-events:auto;touch-action:none;cursor:default;outline:1px solid transparent;transition:background .12s}
+.desk-icon:hover{background:rgba(255,255,255,.1);outline-color:rgba(255,255,255,.12)}
+.desk-icon:active{background:rgba(255,255,255,.16)}
+.desk-icon.dragging{background:rgba(255,255,255,.13);outline-color:rgba(255,255,255,.22);z-index:9;transition:none;cursor:grabbing}
+.desk-icon .tile{width:42px;height:42px;border-radius:10px;display:grid;place-items:center;font-size:19px;box-shadow:0 4px 12px rgba(0,0,0,.35)}
+.desk-icon>span:last-child{font-size:11.5px;color:var(--desk-text);text-shadow:var(--desk-shadow);line-height:1.25;word-break:break-word;pointer-events:none}
+.tile{display:grid;place-items:center;border-radius:9px;flex:none}
+.tile>svg{display:block;width:100%;height:100%}
+
+/* ─────────────── Pinned desktop widgets ─────────────── */
+#desk-widgets{position:absolute;top:12px;right:12px;width:296px;z-index:2;display:flex;flex-direction:column;gap:10px}
+.desk-widget{text-align:left;padding:12px 14px;border-radius:10px;cursor:pointer;
+  border:1px solid var(--stroke-strong);background:var(--panel-bg);backdrop-filter:blur(40px) saturate(160%);-webkit-backdrop-filter:blur(40px) saturate(160%);
+  box-shadow:0 14px 40px rgba(0,0,0,.35);display:flex;flex-direction:column;gap:10px;color:var(--text);transition:transform .15s ease,box-shadow .15s ease}
+.desk-widget:hover{transform:translateY(-2px);box-shadow:0 20px 52px rgba(0,0,0,.48)}
+.desk-widget:active{transform:translateY(0)}
+.dw-head{display:flex;align-items:center;justify-content:space-between;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim)}
+.dw-main{display:flex;align-items:center;gap:10px;min-width:0}
+.dw-av{position:relative;flex:none}
+.dw-av img{width:44px;height:44px;border-radius:50%;object-fit:cover;background:var(--active);display:block}
+.dw-av .fallback{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#5865f2,#8b9dff);color:#fff;font-weight:600;font-size:15px}
+.dw-av .ring{position:absolute;inset:-2px;border-radius:50%;border:2px solid var(--accent)}
+.dw-name{font-size:13.5px;font-weight:600;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dw-sub{font-size:11px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dw-custom{font-size:11.5px;line-height:1.4;opacity:.85;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.dw-act{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text-dim);min-width:0}
+.dw-act img{width:24px;height:24px;border-radius:5px;object-fit:cover;background:var(--active);flex:none}
+.dw-act span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hw-badge{width:44px;height:44px;border-radius:9px;display:grid;place-items:center;background:rgba(159,239,0,.14);color:#9fef00;font-weight:800;font-size:11px;letter-spacing:.02em;flex:none}
+.hw-line{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11px;color:var(--text-dim)}
+.hw-line span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hw-track{height:6px;border-radius:4px;background:var(--active);overflow:hidden;margin-top:6px}
+.hw-track>i{display:block;height:100%;background:#9fef00;border-radius:4px;transition:width .5s}
+.hw-stats{display:flex;align-items:center;gap:14px;font-size:11px;color:var(--text-dim)}
+.hw-stats i{opacity:.6;margin-right:4px}
+
+/* Top-center RSS widget */
+#rss-widget{position:absolute;top:12px;left:50%;translate:-50% 0;width:380px;z-index:2;cursor:default}
+#rss-widget .rw-all{color:var(--accent)}
+.rw-item{display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:6px 8px;margin:0 -8px;border-radius:6px;text-decoration:none;color:var(--text);transition:background .12s}
+.rw-item:hover{background:var(--hover)}
+.rw-title{font-size:12px;font-weight:500;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rw-date{font-size:10.5px;color:var(--text-dim);flex:none;font-variant-numeric:tabular-nums}
+.rw-all{align-self:flex-start;font-size:11px;text-decoration:none;display:flex;align-items:center;gap:6px;padding:2px 0}
+.rw-all:hover{text-decoration:underline}
+
+/* CV viewer */
+.pdfv{display:flex;flex-direction:column;height:100%;background:#eef1f4}
+:root[data-theme="dark"] .pdfv{background:#181818}
+.pdfv-bar{display:flex;align-items:center;gap:14px;padding:9px 14px;border-bottom:1px solid var(--stroke);background:var(--win-head);flex:none}
+.pdfv-name{font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:8px}
+.pdfv-name i{color:#d93025}
+.pdfv-hint{font-size:11px;color:var(--text-dim);margin-right:auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pdfv-frame{flex:1;width:100%;border:0;background:#fff;min-height:0}
+
+/* ─────────────── Taskbar ─────────────── */
+#taskbar{position:fixed;left:0;right:0;bottom:0;height:var(--taskbar-h);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;z-index:900;
+  background:linear-gradient(rgba(0,0,85,.06),rgba(0,0,85,.02) 40%,rgba(0,0,85,.14)),rgba(28,28,28,.62);
+  backdrop-filter:blur(32px) saturate(160%);-webkit-backdrop-filter:blur(32px) saturate(160%);
+  border-top:1px solid var(--stroke);}
+:root[data-theme="light"] #taskbar{background:linear-gradient(rgba(255,255,255,.35),rgba(255,255,255,.5)),rgba(243,243,243,.72)}
+#tb-center{grid-column:2;display:flex;align-items:center;gap:4px;height:100%;padding:0 6px;max-width:70vw;overflow-x:auto;scrollbar-width:none}
+#tb-center::-webkit-scrollbar{display:none}
+.tb-btn{position:relative;width:42px;height:40px;border-radius:4px;display:grid;place-items:center;transition:background .12s}
+.tb-btn:hover{background:var(--hover)}
+.tb-btn:active{background:var(--active)}
+.tb-btn .tile{width:24px;height:24px;font-size:13px;border-radius:6px}
+.tb-btn.weather{width:auto;padding:0 10px;gap:8px;display:flex}
+.tb-btn.weather .w-temp{font-size:12px;color:var(--text-dim)}
+.tb-btn .dot{position:absolute;bottom:1px;left:50%;transform:translateX(-50%);width:6px;height:3px;border-radius:2px;background:var(--accent);opacity:0;transition:width .18s,opacity .18s}
+.tb-btn.running .dot{opacity:.85}
+.tb-btn.focused .dot{width:16px;opacity:1}
+.tb-btn.focused{background:var(--hover)}
+#tb-right{grid-column:3;justify-self:end;display:flex;align-items:center;height:100%;padding-right:6px}
+.tray{display:flex;align-items:center;gap:2px;height:34px;padding:0 6px;border-radius:4px;transition:background .12s}
+.tray:hover{background:var(--hover)}
+.tray i{font-size:12px;opacity:.9;padding:0 3px}
+#clock{padding:0 10px;height:34px;border-radius:4px;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;line-height:1.25;transition:background .12s}
+#clock:hover{background:var(--hover)}
+#clock b{font-size:12px;font-weight:500}
+#clock span{font-size:11px;color:var(--text-dim)}
+#tb-bell{position:relative}
+#tb-bell .badge{position:absolute;top:2px;right:2px;min-width:14px;height:14px;border-radius:8px;background:var(--accent);color:#fff;font-size:9px;display:grid;place-items:center;padding:0 3px;font-weight:600}
+
+/* ─────────────── Panels (start / quick / notif / widgets) ─────────────── */
+.panel{position:fixed;z-index:960;background:var(--panel-bg);backdrop-filter:blur(40px) saturate(160%);-webkit-backdrop-filter:blur(40px) saturate(160%);
+  border:1px solid var(--stroke-strong);box-shadow:var(--shadow);color:var(--text);opacity:0;visibility:hidden;transform:translateY(14px) scale(.995);transition:opacity .18s ease,transform .22s cubic-bezier(.2,.9,.3,1),visibility .18s}
+.panel.open{opacity:1;visibility:visible;transform:none}
+#start{left:50%;translate:-50% 0;bottom:calc(var(--taskbar-h) + 10px);width:min(660px,calc(100vw - 24px));border-radius:9px;padding:26px 30px 0;display:flex;flex-direction:column;max-height:min(680px,calc(100vh - var(--taskbar-h) - 24px));overflow:hidden}
+.start-search{display:flex;align-items:center;gap:10px;height:38px;padding:0 12px;border-radius:6px;background:rgba(255,255,255,.06);border:1px solid var(--stroke);margin-bottom:22px}
+:root[data-theme="light"] .start-search{background:rgba(255,255,255,.7)}
+.start-search input{flex:1;background:none;border:0;outline:none;color:var(--text);font-size:13px}
+.start-search input::placeholder{color:var(--text-dim)}
+.start-search i{font-size:12px;color:var(--accent)}
+.start-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.start-head b{font-size:13px;font-weight:600}
+.start-head button{font-size:12px;padding:5px 12px;border-radius:4px;background:var(--hover);display:flex;align-items:center;gap:6px}
+.start-head button:hover{background:var(--active)}
+#start-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-bottom:22px}
+.start-app{display:flex;flex-direction:column;align-items:center;gap:7px;padding:12px 4px 9px;border-radius:6px;transition:background .12s}
+.start-app:hover{background:var(--hover)}
+.start-app:active{background:var(--active)}
+.start-app .tile{width:34px;height:34px;font-size:15px}
+.start-app span{font-size:11px;line-height:1.2;text-align:center}
+#start-rec{display:flex;flex-direction:column;gap:2px;margin-bottom:16px;overflow-y:auto;min-height:0}
+.rec-item{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;padding:9px 10px;border-radius:6px;text-decoration:none;transition:background .12s}
+.rec-item:hover{background:var(--hover)}
+.rec-item .tile{width:30px;height:30px;font-size:13px}
+.rec-item b{font-size:12.5px;font-weight:500;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rec-item small{font-size:11px;color:var(--text-dim)}
+#start-foot{display:flex;align-items:center;justify-content:space-between;height:58px;margin:0 -30px;padding:0 26px;background:rgba(0,0,0,.18);border-top:1px solid var(--stroke)}
+:root[data-theme="light"] #start-foot{background:rgba(0,0,0,.03)}
+.start-user{display:flex;align-items:center;gap:10px;padding:5px 8px;border-radius:5px;transition:background .12s}
+.start-user:hover{background:var(--hover)}
+.start-user img{width:30px;height:30px;border-radius:50%;object-fit:cover;background:var(--active)}
+.start-user .fallback{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#6e5bf7,#a78bfa);font-size:12px;font-weight:600;color:#fff}
+.start-user div{line-height:1.3;text-align:left}
+.start-user b{font-size:12.5px;font-weight:500;display:block}
+.start-user small{font-size:10.5px;color:var(--text-dim)}
+.power-btn{width:34px;height:34px;border-radius:5px;display:grid;place-items:center;transition:background .12s}
+.power-btn:hover{background:var(--hover)}
+
+#widgets{left:8px;bottom:calc(var(--taskbar-h) + 10px);width:min(430px,calc(100vw - 24px));max-height:calc(100vh - var(--taskbar-h) - 20px);border-radius:9px;padding:18px;display:grid;grid-template-columns:1fr 1fr;gap:12px;grid-auto-rows:min-content;overflow-y:auto}
+.widget{background:rgba(255,255,255,.045);border:1px solid var(--stroke);border-radius:8px;padding:14px;min-height:96px;display:flex;flex-direction:column;gap:8px}
+:root[data-theme="light"] .widget{background:rgba(255,255,255,.6)}
+.widget.span2{grid-column:span 2}
+.widget-head{display:flex;align-items:center;justify-content:space-between;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--text-dim)}
+.widget-head i{font-size:11px}
+.w-big{font-size:30px;font-weight:600;letter-spacing:-.02em}
+.w-sub{font-size:11.5px;color:var(--text-dim)}
+
+#quick{right:8px;bottom:calc(var(--taskbar-h) + 10px);width:min(360px,calc(100vw - 24px));border-radius:9px;padding:16px;display:flex;flex-direction:column;gap:14px}
+.qs-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.qs-toggle{height:64px;border-radius:7px;background:var(--hover);border:1px solid var(--stroke);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;font-size:11px;transition:background .15s,border-color .15s}
+.qs-toggle i{font-size:15px}
+.qs-toggle.on{background:color-mix(in srgb,var(--accent) 86%,#000);border-color:transparent;color:#fff}
+.qs-toggle:hover{filter:brightness(1.15)}
+.qs-slider{display:flex;align-items:center;gap:10px;font-size:12px}
+.qs-slider input{flex:1;accent-color:var(--accent)}
+.qs-sep{height:1px;background:var(--stroke)}
+.qs-line{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px}
+.accent-dots{display:flex;gap:6px}
+.accent-dots button{width:18px;height:18px;border-radius:50%;border:2px solid transparent}
+.accent-dots button.sel{border-color:var(--text);box-shadow:0 0 0 1px rgba(0,0,0,.4)}
+
+#notif{right:8px;bottom:calc(var(--taskbar-h) + 10px);width:min(370px,calc(100vw - 24px));border-radius:9px;padding:14px;display:flex;flex-direction:column;gap:10px;max-height:60vh;overflow-y:auto}
+.notif-card{background:rgba(255,255,255,.05);border:1px solid var(--stroke);border-radius:8px;padding:12px;display:grid;grid-template-columns:auto 1fr;gap:10px}
+:root[data-theme="light"] .notif-card{background:rgba(255,255,255,.65)}
+.notif-card .tile{width:26px;height:26px;font-size:12px}
+.notif-card b{font-size:12px;font-weight:600;display:block;margin-bottom:2px}
+.notif-card p{margin:0;font-size:11.5px;color:var(--text-dim);line-height:1.45}
+.notif-card a{color:var(--accent);text-decoration:none}
+
+/* ─────────────── Windows ─────────────── */
+#win-layer{position:absolute;inset:0;z-index:10;pointer-events:none}
+.win{position:absolute;pointer-events:auto;background:linear-gradient(160deg,rgba(255,255,255,.035),transparent 42%),var(--win-bg);backdrop-filter:blur(40px) saturate(150%);-webkit-backdrop-filter:blur(40px) saturate(150%);
+  border:1px solid var(--stroke-strong);border-radius:var(--r-win);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden;
+  min-width:320px;min-height:200px;transition:box-shadow .2s,opacity .16s,transform .16s}
+.win.opening{animation:winIn .18s ease-out}
+@keyframes winIn{from{opacity:0;transform:scale(.97) translateY(8px)}to{opacity:1;transform:none}}
+.win.minimized{display:none}
+.win.maxed{border-radius:0;border-color:transparent}
+.win.focused{box-shadow:0 40px 100px rgba(0,0,0,.6),0 0 0 1px var(--stroke-strong)}
+.win-titlebar{height:34px;flex:none;display:flex;align-items:center;justify-content:space-between;background:var(--win-head);border-bottom:1px solid var(--stroke);cursor:default}
+.win-app{display:flex;align-items:center;gap:8px;padding-left:11px;min-width:0}
+.win-app .tile{width:16px;height:16px;font-size:9px;border-radius:4px}
+.win-name{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.win-controls{display:flex;height:100%;align-self:stretch}
+.wc{width:46px;height:100%;display:grid;place-items:center;font-size:10px;transition:background .1s}
+.wc:hover{background:var(--hover)}
+.wc.close:hover{background:#c42b1c;color:#fff}
+.win-body{flex:1;overflow:auto;min-height:0;padding:18px 20px 20px}
+.win-body.nopad{padding:0}
+.rz{position:absolute;z-index:5}
+.rz-e{top:0;right:0;width:5px;height:100%;cursor:ew-resize}
+.rz-s{bottom:0;left:0;height:5px;width:100%;cursor:ns-resize}
+.rz-w{top:0;left:0;width:5px;height:100%;cursor:ew-resize}
+.rz-n{top:0;left:0;height:5px;width:100%;cursor:ns-resize}
+.rz-se{right:0;bottom:0;width:14px;height:14px;cursor:nwse-resize}
+.rz-sw{left:0;bottom:0;width:14px;height:14px;cursor:nesw-resize}
+.rz-ne{right:0;top:0;width:14px;height:14px;cursor:nesw-resize}
+.rz-nw{left:0;top:0;width:14px;height:14px;cursor:nwse-resize}
+#snap-hint{position:fixed;z-index:999999;border:1px solid color-mix(in srgb,var(--accent) 70%,transparent);background:color-mix(in srgb,var(--accent) 18%,transparent);border-radius:8px;pointer-events:none;opacity:0;transition:opacity .12s,left .12s,top .12s,width .12s,height .12s;backdrop-filter:blur(4px)}
+#snap-hint.on{opacity:1}
+
+/* ─────────────── App content ─────────────── */
+.h1{font-size:18px;font-weight:600;margin:0 0 4px}
+.muted{color:var(--text-dim);font-size:12.5px;line-height:1.55}
+.hero{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+.hero img,.hero .fallback{width:72px;height:72px;border-radius:50%;object-fit:cover;background:var(--active);flex:none}
+.hero .fallback{display:grid;place-items:center;font-size:26px;font-weight:600;background:linear-gradient(135deg,#6e5bf7,#a78bfa);color:#fff}
+.hero .ring{position:relative;flex:none}
+.hero .ring::after{content:"";position:absolute;inset:-3px;border-radius:50%;border:3px solid var(--accent);opacity:.9}
+.status-pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;padding:2px 9px;border-radius:20px;margin-top:5px;font-weight:500}
+.status-pill i{width:6px;height:6px;border-radius:50%;display:block}
+.dot-green{background:#23a55a}.dot-yellow{background:#f0b232}.dot-red{background:#f23f43}.dot-gray{background:#80848e}
+.pill-green{background:rgba(35,165,90,.16);color:#3ddc84}
+.pill-yellow{background:rgba(240,178,50,.16);color:#ffce5b}
+.pill-red{background:rgba(242,63,67,.16);color:#ff7b7e}
+.pill-gray{background:rgba(128,132,142,.18);color:#a9adb8}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.btn{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 14px;border-radius:5px;background:var(--hover);border:1px solid var(--stroke-strong);font-size:12.5px;text-decoration:none;transition:background .12s}
+.btn:hover{background:var(--active)}
+.btn.primary{background:var(--accent);border-color:transparent;color:#fff}
+.btn.primary:hover{filter:brightness(1.12)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:8px 18px;font-size:12.5px;margin-top:6px}
+.kv dt{color:var(--text-dim)}
+.kv dd{margin:0}
+.section-title{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-dim);margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+.section-title::after{content:"";flex:1;height:1px;background:var(--stroke)}
+.list{display:flex;flex-direction:column;gap:2px}
+.list-item{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:11px 10px;border-radius:6px;text-decoration:none;transition:background .12s}
+.list-item:hover{background:var(--hover)}
+.list-item .tile{width:34px;height:34px;font-size:15px}
+.list-item b{font-size:13px;font-weight:500;display:block;line-height:1.35}
+.list-item small{font-size:11.5px;color:var(--text-dim);display:block;margin-top:2px}
+.list-item>i{font-size:11px;opacity:.5}
+.chip{font-size:10.5px;padding:2px 8px;border-radius:12px;background:var(--active);color:var(--text-dim)}
+.bubble{position:relative;background:color-mix(in srgb,var(--accent) 12%,transparent);border:1px solid color-mix(in srgb,var(--accent) 22%,transparent);border-radius:12px;padding:10px 13px;font-size:12.5px;line-height:1.5;max-width:420px;margin-top:12px}
+.act-card{background:rgba(255,255,255,.05);border:1px solid var(--stroke);border-radius:10px;padding:14px;margin-top:14px}
+:root[data-theme="light"] .act-card{background:rgba(255,255,255,.6)}
+.act-card.spotify{background:rgba(30,215,96,.07);border-color:rgba(30,215,96,.18)}
+.act-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.act-kind{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim);display:flex;align-items:center;gap:7px;font-weight:600}
+.act-kind.spot{color:#3ddc84}
+.act-time{font-size:10.5px;color:var(--text-dim);font-variant-numeric:tabular-nums}
+.act-main{display:flex;gap:14px;min-width:0}
+.act-main img{width:60px;height:60px;border-radius:8px;object-fit:cover;background:var(--active);flex:none}
+.act-main .txt{min-width:0}
+.act-main b{font-size:13.5px;font-weight:600;display:block;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.act-main p{margin:3px 0 0;font-size:12px;color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.act-main p.small{font-size:11px;opacity:.8}
+.progress{height:4px;border-radius:3px;background:var(--active);overflow:hidden;margin-top:10px}
+.progress>i{display:block;height:100%;background:#1ed760;border-radius:3px;transition:width .8s linear}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.stat{background:rgba(255,255,255,.045);border:1px solid var(--stroke);border-radius:8px;padding:12px}
+:root[data-theme="light"] .stat{background:rgba(255,255,255,.6)}
+.stat small{font-size:11px;color:var(--text-dim);display:block;margin-bottom:4px}
+.stat b{font-size:17px;font-weight:600;display:flex;align-items:center;gap:8px}
+.htb-badge{background:rgba(159,239,0,.14);color:#9fef00;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:12px;letter-spacing:.04em}
+.progress.htb>i{background:#9fef00}
+.post-date{font-size:11px;color:var(--text-dim);font-variant-numeric:tabular-nums}
+
+/* Settings */
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:13px 0;border-bottom:1px solid var(--stroke);font-size:13px}
+.set-row:last-child{border-bottom:0}
+.set-row small{display:block;color:var(--text-dim);font-size:11.5px;margin-top:2px;font-weight:400}
+.switch{width:40px;height:21px;border-radius:12px;background:var(--active);position:relative;transition:background .18s;flex:none}
+.switch::after{content:"";position:absolute;left:4px;top:3px;width:15px;height:15px;border-radius:50%;background:var(--text);transition:transform .18s,background .18s}
+.switch.on{background:var(--accent)}
+.switch.on::after{transform:translateX(19px);background:#fff}
+
+/* Lock screen */
+#lock{position:fixed;inset:0;z-index:2000;display:grid;place-items:center;background:#05070f;color:#fff;transition:opacity .5s,visibility .5s;cursor:pointer}
+#lock.hidden{opacity:0;visibility:hidden}
+#lock .lock-bg{position:absolute;inset:0;background:#05060f url('./wallpaper.jpg') center/cover no-repeat;overflow:hidden}
+#lock .lock-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.72))}
+#lock .lock-inner{position:relative;text-align:center;animation:lockIn .5s ease}
+@keyframes lockIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+#lock .lock-date{font-size:20px;font-weight:400;opacity:.95;margin-bottom:4px}
+#lock .lock-time{font-size:96px;font-weight:600;letter-spacing:-.03em;line-height:1}
+#lock .lock-hint{margin-top:28px;font-size:12.5px;opacity:.65}
+#lock .lock-user{margin-top:34px;display:flex;flex-direction:column;align-items:center;gap:10px}
+#lock .lock-user img,#lock .lock-user .fallback{width:64px;height:64px;border-radius:50%;object-fit:cover;background:rgba(255,255,255,.15)}
+#lock .lock-user .fallback{display:grid;place-items:center;font-size:24px;font-weight:600}
+#lock .lock-user b{font-size:15px;font-weight:500}
+
+/* Power overlay */
+#off{position:fixed;inset:0;z-index:2100;background:#000;color:#555;display:grid;place-items:center;font-size:13px;opacity:0;visibility:hidden;transition:opacity .8s,visibility .8s;cursor:pointer}
+#off.on{opacity:1;visibility:visible}
+
+
+/* Screen dimming */
+#dim{position:fixed;inset:0;z-index:2500;background:#000;opacity:0;pointer-events:none;transition:opacity .1s linear}
+
+/* Toasts */
+#toasts{position:fixed;right:12px;bottom:calc(var(--taskbar-h) + 12px);z-index:950;display:flex;flex-direction:column;gap:8px;width:min(360px,calc(100vw - 24px))}
+.toast{background:var(--panel-bg);backdrop-filter:blur(40px) saturate(160%);border:1px solid var(--stroke-strong);border-radius:8px;box-shadow:var(--shadow);padding:12px 14px;display:grid;grid-template-columns:auto 1fr;gap:11px;animation:toastIn .28s cubic-bezier(.2,.9,.3,1);position:relative;overflow:hidden}
+@keyframes toastIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
+.toast.out{opacity:0;transform:translateY(8px);transition:opacity .25s,transform .25s}
+.toast .tile{width:28px;height:28px;font-size:13px}
+.toast b{font-size:12px;font-weight:600;display:block;margin-bottom:2px}
+.toast p{margin:0;font-size:11.5px;color:var(--text-dim);line-height:1.45}
+.toast a{color:var(--accent);text-decoration:none}
+
+/* Context menu */
+#ctx{position:fixed;z-index:1500;min-width:220px;background:var(--panel-bg);backdrop-filter:blur(40px) saturate(160%);border:1px solid var(--stroke-strong);border-radius:8px;box-shadow:var(--shadow);padding:5px;display:none;font-size:12.5px}
+#ctx.open{display:block}
+#ctx button{display:flex;align-items:center;gap:11px;width:100%;padding:8px 11px;border-radius:5px;text-align:left;transition:background .1s}
+#ctx button:hover{background:var(--hover)}
+#ctx button i{width:15px;text-align:center;font-size:12px;opacity:.8}
+#ctx .sep{height:1px;background:var(--stroke);margin:5px 4px}
+
+/* Boot */
+#boot{position:fixed;inset:0;z-index:3000;background:#000;display:grid;place-items:center;color:#fff;transition:opacity .6s,visibility .6s}
+#boot.hidden{opacity:0;visibility:hidden}
+#boot .logo{display:grid;grid-template-columns:repeat(2,20px);grid-template-rows:repeat(2,20px);gap:3px;margin-bottom:28px}
+#boot .logo i{background:#0078d4;border-radius:1px;display:block}
+#boot .spin{width:26px;height:26px;border-radius:50%;border:2.5px solid rgba(255,255,255,.22);border-top-color:#fff;animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#boot p{font-size:12px;opacity:.6;margin-top:16px}
+
+/* Mobile */
+@media (max-width:1024px){
+  #rss-widget{display:none}
+}
+@media (max-width:820px){
+  .win{left:0!important;top:0!important;width:100%!important;height:100%!important;border-radius:0;border:0}
+  .rz{display:none}
+  .desk-icon{width:74px}
+  #tb-center{max-width:56vw}
+  .tb-btn.weather{display:none}
+  #desk-widgets{display:none}
+  #start{width:calc(100vw - 16px);padding:20px 18px 0;max-height:calc(100vh - var(--taskbar-h) - 18px)}
+  #start-foot{margin:0 -18px;padding:0 16px}
+  #start-grid{grid-template-columns:repeat(4,1fr)}
+  #widgets{width:calc(100vw - 16px);left:8px;top:8px}
+  #quick,#notif{width:calc(100vw - 16px);right:8px}
+  .grid2{grid-template-columns:1fr}
+}
+@media (max-width:520px){
+  #clock span{display:none}
+  #tb-center{max-width:48vw}
+  .win-body{padding:14px}
+  .list-item{grid-template-columns:auto 1fr}
+  .list-item .post-date,.list-item>i{display:none}
+  .list-item small{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  #start-rec .rec-item b{white-space:normal}
+}
+</style>
 </head>
-<body class="min-h-screen bg-black text-white">
-    <div class="container mx-auto px-4 py-12 max-w-4xl">
-        <!-- Header Section -->
-        <header class="text-center mb-12">
-            <h1 class="text-5xl md:text-6xl font-bold mb-4">Doğu Kervan</h1>
-            <p class="text-xl md:text-2xl opacity-70">Studying Computer Engineering at Işık University.</p>
-        </header>
+<body>
+<div id="dim" aria-hidden="true"></div>
 
-        <!-- Discord Status Card -->
-        <div class="card-dark backdrop-blur-md rounded-2xl p-6 mb-8 shadow-2xl border">
-            <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
-                <i class="fab fa-discord text-indigo-300"></i>
-                Discord Status
-            </h2>
-            <div id="discord-status" class="flex flex-col md:flex-row gap-6">
-                <!-- Left: User info -->
-                <div class="flex flex-col items-center md:items-start gap-2.5 shrink-0">
-                    <div class="flex items-center gap-3">
-                        <div class="relative shrink-0">
-                            <div id="avatar-ring" class="absolute -inset-[3px] rounded-full opacity-0 transition-opacity duration-500"></div>
-                            <img id="discord-avatar" src="" alt="Discord Avatar" class="relative w-[68px] h-[68px] rounded-full hidden z-10">
-                        </div>
-                        <div class="min-w-0">
-                            <p class="text-lg font-bold leading-tight truncate" id="discord-username">Loading...</p>
-                            <span id="status-badge" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium mt-1">Fetching...</span>
-                            <div id="platform-icons" class="flex items-center gap-1.5 mt-1.5 text-white/40 text-xs"></div>
-                        </div>
-                    </div>
-                    <p class="bubble px-3 py-2 text-sm hidden fade-in" id="discord-custom-status"></p>
-                </div>
-                <!-- Right: Activity -->
-                <div id="discord-activity" class="flex-1 min-w-0 w-full">
-                    <!-- Activity renders here -->
-                </div>
-            </div>
-        </div>
+<div id="boot">
+  <div style="display:flex;flex-direction:column;align-items:center">
+    <div class="logo"><i></i><i></i><i></i><i></i></div>
+    <div class="spin"></div>
+    <p>Hoş geldin</p>
+  </div>
+</div>
 
-        <!-- Latest Posts from RSS -->
-        <div class="card-dark backdrop-blur-md rounded-2xl p-6 mb-8 shadow-2xl border">
-            <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
-                <i class="fas fa-newspaper text-gray-300"></i>
-                Latest Posts
-            </h2>
-            <div id="rss-posts" class="space-y-4">
-                <p class="opacity-70 text-sm">Loading latest posts...</p>
-            </div>
-        </div>
+<div id="desktop">
+  <div id="wall"><div class="veil"></div></div>
 
-        <!-- Blog & Social Links -->
-        <div class="grid md:grid-cols-2 gap-6 mb-8">
-            <!-- RSS Feed Card -->
-            <a href="https://blog.dogukervan.me/" target="_blank" 
-               class="card-dark backdrop-blur-md rounded-2xl p-6 shadow-2xl border hover:scale-105 transition-all duration-300">
-                <div class="flex items-center gap-4">
-                    <div >
-                        <i class="fas fa-calendar text-3xl text-white"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold">Blog</h3>
-                        <p class="opacity-70">Read my articles.</p>
-                    </div>
-                </div>
-            </a>
+  <div id="desk-icons" aria-label="Masaüstü"></div>
 
-            <!-- LinkedIn Card -->
-            <a href="https://www.linkedin.com/in/do%C4%9Fu-kervan-79504b382" target="_blank"
-               class="card-dark backdrop-blur-md rounded-2xl p-6 shadow-2xl border hover:scale-105 transition-all duration-300">
-                <div class="flex items-center gap-4">
-                    <div>
-                        <i class="fab fa-linkedin text-3xl text-white"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold">LinkedIn</h3>
-                        <p class="opacity-70">Connect with me professionally</p>
-                    </div>
-                </div>
-            </a>
-        </div>
-
-        
-
-        <!-- HackTheBox Stats (HTB API direct JSON) -->
-        <section class="card-dark backdrop-blur-md rounded-2xl p-6 shadow-2xl border mb-8" href="google.com"">
-            <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
-                <i class="fas fa-chart-line text-green-300"></i>
-                HackTheBox Stats
-            </h2>
-            <div id="htb-stats-custom" class="w-full">
-                <p class="opacity-70 text-sm">Loading HackTheBox stats...</p>
-            </div>
-        </section>
-
-        <!-- Footer -->
-        <footer class="text-center mt-12 opacity-75">
-            <p>&copy; 2025 Doğu Kervan. All rights reserved.</p>
-            <p class="mt-2">
-                <i class="fas fa-envelope"></i>
-                <a href="mailto:dogu.kervan@computer.org" class="underline hover:no-underline">dogu.kervan@computer.org</a>
-            </p>
-            <!-- Badges Row (user-provided GIFs) -->
-            <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
-                <!-- Get free 7-Zip GIF (clickable) -->
-                <a href="https://www.7-zip.org/" target="_blank" rel="noopener noreferrer" class="hover:opacity-90" title="Get free 7-Zip">
-                    <img src="./7zip.gif" alt="Get free 7-Zip" class="h-10">
-                </a>
-
-                <!-- Best VW / retro style GIF -->
-                <span class="hover:opacity-90" title="bestvw">
-                    <img src="./bestvw.gif" alt="bestvw" class="h-10">
-                </span>
-
-                <!-- 100% cookie-free GIF -->
-                <span class="hover:opacity-90" title="This site is certified 100% cookie free!">
-                    <img src="./nocookie.gif" alt="This site is certified 100% cookie free!" class="h-10">
-                </span>
-                <!-- postmarketOS -->
-                    <a href="https://postmarketos.org" target="_blank" rel="noopener noreferrer" class="hover:opacity-90" title="I'm using postmarketOS">
-                    <img src="./pmos.png" alt="I'm using postmarketOS" class="h-10">
-                </a>
-            </div>
-        </footer>
+  <!-- Pinned desktop widgets (top-right) -->
+  <div id="desk-widgets">
+    <div id="discord-widget" class="desk-widget" role="button" tabindex="0" title="Discord'u aç" aria-label="Discord durumu">
+      <div class="dw-head"><span>Discord</span><i class="fa-brands fa-discord"></i></div>
+      <div id="dw-body"><div class="dw-sub">Yükleniyor…</div></div>
     </div>
+    <div id="htb-widget" class="desk-widget" role="button" tabindex="0" title="HackTheBox'ı aç" aria-label="HackTheBox istatistikleri">
+      <div class="dw-head"><span>HackTheBox</span><i class="fa-solid fa-cube"></i></div>
+      <div id="hw-body"><div class="dw-sub">Yükleniyor…</div></div>
+    </div>
+  </div>
 
-    <script>
-        const DISCORD_ID = '1401588534007300310';
-        const LANYARD_API = `https://api.lanyard.rest/v1/users/${DISCORD_ID}`;
-        const RSS_URL = 'https://blog.dogukervan.me/feed.xml';
-        const HTB_ID = '2433453';
-        const HTB_PROFILE_API = `https://labs.hackthebox.com/api/v4/profile/${HTB_ID}`;
-        // Use CORS-friendly mirrors first, then fall back to direct API
-        const HTB_ENDPOINTS = [
-            `https://r.jina.ai/http://labs.hackthebox.com/api/v4/profile/${HTB_ID}`,
-            `https://cors.isomorphic-git.org/https://labs.hackthebox.com/api/v4/profile/${HTB_ID}`,
-            `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://labs.hackthebox.com/api/v4/profile/${HTB_ID}`)}`,
-            HTB_PROFILE_API
-        ];
+  <!-- Top-center RSS widget -->
+  <div id="rss-widget" class="desk-widget" aria-label="Blog akışı">
+    <div class="dw-head"><span>Blog · Son yazılar</span><i class="fa-solid fa-newspaper"></i></div>
+    <div id="rw-body"><div class="dw-sub">Yükleniyor…</div></div>
+    <a class="rw-all" href="https://blog.dogukervan.me/" target="_blank" rel="noopener">Tüm yazılar <i class="fa-solid fa-arrow-right"></i></a>
+  </div>
 
-        // ── Helpers ──────────────────────────────────────────────
-        function assetUrl(appId, key) {
-            if (!key) return null;
-            if (key.startsWith('mp:external/')) {
-                const rest = key.slice('mp:external/'.length);
-                const slash = rest.indexOf('/');
-                if (slash === -1) return null;
-                return `https://media.discordapp.net/external/${rest.slice(0, slash)}/${rest.slice(slash + 1)}`;
-            }
-            if (appId) return `https://cdn.discordapp.com/app-assets/${appId}/${key}.png`;
-            return null;
-        }
+  <div id="win-layer">
+    <div id="snap-hint"></div>
+  </div>
 
-        function formatElapsed(startMs) {
-            const diff = Date.now() - startMs;
-            if (diff < 0) return '';
-            const h = Math.floor(diff / 3600000);
-            const m = Math.floor((diff % 3600000) / 60000);
-            if (h > 0) return `${h}h ${m}m elapsed`;
-            if (m > 0) return `${m}m elapsed`;
-            return 'just started';
-        }
+  <!-- Widgets panel -->
+  <section id="widgets" class="panel" aria-label="Widget'lar">
+    <div class="widget span2">
+      <div class="widget-head"><span>Saat</span><i class="fa-regular fa-clock"></i></div>
+      <div class="w-big" id="w-time">--:--</div>
+      <div class="w-sub" id="w-date">—</div>
+    </div>
+    <div class="widget span2">
+      <div class="widget-head"><span>Sistem</span><i class="fa-solid fa-microchip"></i></div>
+      <div class="w-sub" id="w-sys">—</div>
+    </div>
+  </section>
 
-        function formatSpotifyRemaining(startMs, endMs) {
-            const now = Date.now();
-            const remaining = endMs - now;
-            const total = endMs - startMs;
-            if (remaining <= 0 || total <= 0) return null;
-            const pct = Math.min(100, Math.max(0, ((now - startMs) / total) * 100));
-            const min = Math.floor(remaining / 60000);
-            const sec = Math.floor((remaining % 60000) / 1000);
-            return { pct, text: `-${min}:${sec.toString().padStart(2, '0')}` };
-        }
+  <!-- Start menu -->
+  <section id="start" class="panel" aria-label="Başlat">
+    <div class="start-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input id="start-search" type="text" placeholder="Uygulama ve yazı ara" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="start-head"><b>Sabitlenenler</b><button id="all-apps"><span>Tüm uygulamalar</span><i class="fa-solid fa-chevron-right"></i></button></div>
+    <div id="start-grid"></div>
+    <div class="start-head"><b>Önerilenler</b><button id="rec-more"><span>Daha fazla</span><i class="fa-solid fa-chevron-right"></i></button></div>
+    <div id="start-rec"><div class="muted" style="padding:8px 10px">Yazılar yükleniyor…</div></div>
+    <div id="start-foot">
+      <button class="start-user" id="start-user">
+        <span id="start-avatar-slot"><span class="fallback">DK</span></span>
+        <div><b>Doğu Kervan</b><small>Computer Engineering Student</small></div>
+      </button>
+      <button class="power-btn" id="power-btn" title="Güç"><i class="fa-solid fa-power-off"></i></button>
+    </div>
+  </section>
 
-        const TYPE_LABEL = { 0: 'Playing', 1: 'Streaming', 3: 'Watching', 5: 'Competing' };
-        const TYPE_ICON  = { 0: 'fa-gamepad', 1: 'fa-twitch', 3: 'fa-tv', 5: 'fa-trophy' };
-        const STATUS_RING = { online: 'bg-green-500', idle: 'bg-yellow-500', dnd: 'bg-red-500', offline: 'bg-gray-500' };
-        const STATUS_LABEL = { online: 'Online', idle: 'Idle', dnd: 'Do Not Disturb', offline: 'Offline' };
+  <!-- Quick settings -->
+  <section id="quick" class="panel" aria-label="Hızlı ayarlar">
+    <div class="qs-row">
+      <button class="qs-toggle" data-qs="night"><i class="fa-solid fa-moon"></i><span>Gece ışığı</span></button>
+      <button class="qs-toggle on" data-qs="theme"><i class="fa-solid fa-circle-half-stroke"></i><span>Tema</span></button>
+      <button class="qs-toggle" data-qs="lock"><i class="fa-solid fa-lock"></i><span>Kilitle</span></button>
+    </div>
+    <div class="qs-slider"><i class="fa-solid fa-volume-high" style="width:16px"></i><input type="range" min="0" max="100" value="62" aria-label="Ses"></div>
+    <div class="qs-slider"><i class="fa-solid fa-sun" style="width:16px"></i><input id="brightness" type="range" min="15" max="100" value="100" aria-label="Parlaklık"></div>
+    <div class="qs-sep"></div>
+    <div class="qs-line"><span>Vurgu rengi</span><div class="accent-dots" id="accent-dots"></div></div>
+  </section>
 
-        function renderActivity(activity) {
-            if (activity.type === 2) return renderSpotify(activity);
+  <!-- Notifications -->
+  <section id="notif" class="panel" aria-label="Bildirimler">
+    <div class="section-title" style="margin:0 0 2px">Bildirimler</div>
+    <div id="notif-list"></div>
+  </section>
 
-            const label = TYPE_LABEL[activity.type] || 'Playing';
-            const icon  = TYPE_ICON[activity.type] || 'fa-gamepad';
-            const img   = assetUrl(activity.application_id, activity.assets?.large_image);
-            const elapsed = activity.timestamps?.start ? formatElapsed(activity.timestamps.start) : '';
+  <div id="toasts"></div>
+</div>
 
-            return `
-                <div class="bg-white/5 rounded-xl p-4 border border-white/5 w-full fade-in">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-wider opacity-50 font-medium">
-                            <i class="fas ${icon}"></i> ${label}
-                        </span>
-                        ${elapsed ? `<span class="text-[11px] opacity-40 tabular-nums">${elapsed}</span>` : ''}
-                    </div>
-                    <div class="flex gap-3.5">
-                        ${img ? `<img src="${img}" class="w-[60px] h-[60px] rounded-lg object-cover shrink-0 bg-white/5" onerror="this.remove()" alt="">` : ''}
-                        <div class="flex-1 min-w-0">
-                            <p class="font-semibold text-[15px] leading-snug truncate">${activity.name}</p>
-                            ${activity.details ? `<p class="text-[13px] opacity-70 truncate mt-0.5">${activity.details}</p>` : ''}
-                            ${activity.state   ? `<p class="text-[13px] opacity-50 truncate mt-0.5">${activity.state}</p>`   : ''}
-                            ${activity.assets?.large_text ? `<p class="text-[11px] opacity-40 truncate mt-1">${activity.assets.large_text}</p>` : ''}
-                        </div>
-                    </div>
-                </div>`;
-        }
+<nav id="taskbar" aria-label="Görev çubuğu">
+  <div></div>
+  <div id="tb-center">
+    <button class="tb-btn" id="start-btn" title="Başlat" aria-label="Başlat"><i class="fa-brands fa-windows" style="font-size:17px;color:var(--accent)"></i></button>
+    <button class="tb-btn" id="search-btn" title="Ara" aria-label="Ara"><i class="fa-solid fa-magnifying-glass" style="font-size:14px;opacity:.85"></i></button>
+    <button class="tb-btn weather" id="widgets-btn" title="Widget'lar" aria-label="Widget'lar">
+      <i class="fa-solid fa-cloud-sun" style="font-size:14px;color:#ffd166"></i><span class="w-temp">Widget'lar</span>
+    </button>
+    <div id="tb-apps" style="display:flex;gap:4px"></div>
+  </div>
+  <div id="tb-right">
+    <button class="tray" id="tray-btn" title="Hızlı ayarlar">
+      <i class="fa-solid fa-volume-high"></i><i class="fa-solid fa-battery-three-quarters"></i>
+    </button>
+    <button id="clock" title="Saat"><b id="clock-time">--:--</b><span id="clock-date">—</span></button>
+    <button class="tray" id="tb-bell" title="Bildirimler" style="position:relative"><i class="fa-regular fa-bell"></i><span class="badge" id="notif-count">0</span></button>
+  </div>
+</nav>
 
-        function renderSpotify(activity) {
-            const img = assetUrl(null, activity.assets?.large_image);
-            const prog = activity.timestamps
-                ? formatSpotifyRemaining(activity.timestamps.start, activity.timestamps.end)
-                : null;
+<!-- Lock screen -->
+<div id="lock" class="hidden">
+  <div class="lock-bg"></div>
+  <div class="lock-inner">
+    <div class="lock-date" id="lock-date">—</div>
+    <div class="lock-time" id="lock-time">--:--</div>
+    <div class="lock-user"><span id="lock-avatar"><span class="fallback">DK</span></span><b>Doğu Kervan</b></div>
+    <div class="lock-hint">Devam etmek için tıkla</div>
+  </div>
+</div>
 
-            return `
-                <div class="bg-green-500/5 rounded-xl p-4 border border-green-500/10 w-full fade-in">
-                    <div class="flex items-center justify-between mb-3">
-                        <span class="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-green-400 font-medium">
-                            <i class="fab fa-spotify"></i> Listening to Spotify
-                        </span>
-                        ${prog ? `<span class="text-[11px] text-green-400/50 tabular-nums font-mono">${prog.text}</span>` : ''}
-                    </div>
-                    <div class="flex gap-3.5">
-                        ${img ? `<img src="${img}" class="w-[60px] h-[60px] rounded-lg object-cover shrink-0 bg-white/5" onerror="this.remove()" alt="">` : ''}
-                        <div class="flex-1 min-w-0">
-                            <p class="font-semibold text-[15px] leading-snug truncate">${activity.details || 'Unknown Track'}</p>
-                            <p class="text-[13px] opacity-70 truncate mt-0.5">${activity.state || ''}</p>
-                            ${prog ? `
-                                <div class="mt-2.5 h-1 bg-white/10 rounded-full overflow-hidden">
-                                    <div class="h-full bg-green-400 rounded-full progress-bar" style="width:${prog.pct}%"></div>
-                                </div>
-                            ` : ''}
-                        </div>
-                    </div>
-                </div>`;
-        }
+<!-- Power off -->
+<div id="off"><span>Kapatmak için tıkla</span></div>
 
-        function renderPlatforms(user) {
-            const icons = [];
-            if (user.active_on_discord_desktop)  icons.push('<i class="fas fa-desktop" title="Desktop"></i>');
-            if (user.active_on_discord_mobile)   icons.push('<i class="fas fa-mobile-alt" title="Mobile"></i>');
-            if (user.active_on_discord_web)      icons.push('<i class="fas fa-globe" title="Web"></i>');
-            return icons.join('');
-        }
+<!-- Context menu -->
+<div id="ctx">
+  <button data-ctx="refresh"><i class="fa-solid fa-rotate"></i>Yenile</button>
+  <div class="sep"></div>
+  <button data-ctx="settings"><i class="fa-solid fa-gear"></i>Kişiselleştir</button>
+  <div class="sep"></div>
+  <button data-ctx="lock"><i class="fa-solid fa-lock"></i>Ekranı kilitle</button>
+</div>
 
-        // ── Fetch ───────────────────────────────────────────────
-        async function fetchDiscordStatus() {
-            try {
-                const response = await fetch(LANYARD_API);
-                const data = await response.json();
+<script>
+/* ══════════════════════════════════════════════════════════════
+   Doğu Kervan — Windows 11 desktop
+   UI inspired by Laaouatni/w11CSS (MIT)
+   ══════════════════════════════════════════════════════════════ */
+'use strict';
 
-                if (data.success && data.data) {
-                    const user = data.data;
+const $  = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 
-                    // Avatar
-                    const av = document.getElementById('discord-avatar');
-                    av.src = `https://cdn.discordapp.com/avatars/${user.discord_user.id}/${user.discord_user.avatar}.png?size=128`;
-                    av.classList.remove('hidden');
+/* ── Config ── */
+const DISCORD_ID   = '1401588534007300310';
+const LANYARD_API  = `https://api.lanyard.rest/v1/users/${DISCORD_ID}`;
+const RSS_URL      = 'https://blog.dogukervan.me/feed.xml';
+const HTB_ID       = '2433453';
+const HTB_PROFILE  = `https://labs.hackthebox.com/api/v4/profile/${HTB_ID}`;
 
-                    // Avatar ring — status-colored
-                    const ring = document.getElementById('avatar-ring');
-                    ring.className = `absolute -inset-[3px] rounded-full opacity-100 transition-opacity duration-500 ${STATUS_RING[user.discord_status] || 'bg-gray-500'}`;
+/* ── State (in-memory only, no cookies/storage) ── */
+const state = {
+  discord: null,
+  posts: null,
+  htb: null,
+  z: 30,
+  accent: '#0078d4',
+  theme: 'dark',
+  notifications: [],
+  unread: 0
+};
 
-                    // Username
-                    document.getElementById('discord-username').textContent =
-                        user.discord_user.global_name || user.discord_user.username;
+/* ═══════════════ Icons & app registry ═══════════════ */
+const ICONS = {
+  about: {
+    svg: `<svg viewBox="0 0 48 48" width="100%" height="100%" aria-hidden="true">
+      <defs><linearGradient id="wAbt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#63c0ff"/><stop offset="1" stop-color="#0a63c9"/></linearGradient>
+      <clipPath id="wAbtClip"><circle cx="24" cy="24" r="21.5"/></clipPath></defs>
+      <circle cx="24" cy="24" r="21.5" fill="url(#wAbt)"/>
+      <g clip-path="url(#wAbtClip)" fill="#fff">
+        <circle cx="24" cy="18.4" r="7.2"/>
+        <path d="M24 29.4c7.5 0 13.8 5 15.7 12H8.3c1.9-7 8.2-12 15.7-12z"/>
+      </g></svg>`
+  },
+  blog: {
+    svg: `<svg viewBox="0 0 48 48" width="100%" height="100%" aria-hidden="true">
+      <defs><linearGradient id="wBlog" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#dce8f6"/></linearGradient></defs>
+      <path d="M11.5 3.5h16.6L40 15.4V42a2.5 2.5 0 0 1-2.5 2.5h-26A2.5 2.5 0 0 1 9 42V6a2.5 2.5 0 0 1 2.5-2.5z" fill="url(#wBlog)" stroke="#b7cde4" stroke-width="1.1"/>
+      <path d="M28.4 3.7v11.4h11.3" fill="#c6daf1"/>
+      <rect x="15" y="22.5" width="18" height="3.2" rx="1.6" fill="#1f7ae0"/>
+      <rect x="15" y="28.8" width="18" height="2.6" rx="1.3" fill="#a3bcd8"/>
+      <rect x="15" y="34" width="11.5" height="2.6" rx="1.3" fill="#a3bcd8"/>
+    </svg>`
+  },
+  discord: { glyph:'fa-discord', bg:'linear-gradient(135deg,#5865f2,#8391ff)', brand:true },
+  htb: {
+    svg: `<svg viewBox="0 0 48 48" width="100%" height="100%" aria-hidden="true">
+      <path d="M24 4.5 42.5 14.7 24 24.9 5.5 14.7z" fill="#c9ff5e"/>
+      <path d="M5.5 14.7 24 24.9v18.6L5.5 33.3z" fill="#8fdd00"/>
+      <path d="M42.5 14.7 24 24.9v18.6l18.5-10.2z" fill="#5faa00"/>
+    </svg>`
+  },
+  links: {
+    svg: `<svg viewBox="0 0 48 48" width="100%" height="100%" aria-hidden="true">
+      <defs><linearGradient id="wGlb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6fd6ff"/><stop offset="1" stop-color="#0b5fc4"/></linearGradient></defs>
+      <circle cx="24" cy="24" r="20" fill="url(#wGlb)"/>
+      <g fill="none" stroke="#fff" stroke-width="1.9" opacity=".92">
+        <ellipse cx="24" cy="24" rx="8.4" ry="19.4"/>
+        <path d="M4.6 24h38.8"/>
+        <path d="M7.6 14.5h32.8M7.6 33.5h32.8"/>
+      </g></svg>`
+  },
+  contact: {
+    svg: `<svg viewBox="0 0 48 48" width="100%" height="100%" aria-hidden="true">
+      <defs><linearGradient id="wEnv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d5e6f8"/></linearGradient></defs>
+      <rect x="4.5" y="11.5" width="39" height="25" rx="3.6" fill="url(#wEnv)" stroke="#a7c5e3" stroke-width="1.1"/>
+      <path d="M6.5 14.5 24 26.4 41.5 14.5" fill="none" stroke="#2b7de9" stroke-width="2.4" stroke-linejoin="round"/>
+    </svg>`
+  },
+  settings: {
+    svg: `<svg viewBox="0 0 48 48" width="100%" height="100%" aria-hidden="true">
+      <defs><linearGradient id="wSet" gradientUnits="userSpaceOnUse" x1="24" y1="2.5" x2="24" y2="45.5"><stop offset="0" stop-color="#8fd3ff"/><stop offset="1" stop-color="#1668ce"/></linearGradient></defs>
+      <g fill="url(#wSet)">
+        <circle cx="24" cy="24" r="12.6"/>
+        <rect x="21.4" y="2.6" width="5.2" height="8.6" rx="1.7"/>
+        <rect x="21.4" y="2.6" width="5.2" height="8.6" rx="1.7" transform="rotate(45 24 24)"/>
+        <rect x="21.4" y="2.6" width="5.2" height="8.6" rx="1.7" transform="rotate(90 24 24)"/>
+        <rect x="21.4" y="2.6" width="5.2" height="8.6" rx="1.7" transform="rotate(135 24 24)"/>
+        <rect x="21.4" y="2.6" width="5.2" height="8.6" rx="1.7" transform="rotate(180 24 24)"/>
+        <rect x="21.4" y="2.6" width="5.2" height="8.6" rx="1.7" transform="rotate(225 24 24)"/>
+        <rect x="21.4" y="2.6" width="5.2" height="8.6" rx="1.7" transform="rotate(270 24 24)"/>
+        <rect x="21.4" y="2.6" width="5.2" height="8.6" rx="1.7" transform="rotate(315 24 24)"/>
+      </g>
+      <circle cx="24" cy="24" r="5.7" fill="#0b4f9e"/>
+    </svg>`
+  },
+  cv: {
+    svg: `<svg viewBox="0 0 48 48" width="100%" height="100%" aria-hidden="true">
+      <defs><linearGradient id="wCv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e4eaf1"/></linearGradient></defs>
+      <path d="M11.5 3.5h16.6L40 15.4V42a2.5 2.5 0 0 1-2.5 2.5h-26A2.5 2.5 0 0 1 9 42V6a2.5 2.5 0 0 1 2.5-2.5z" fill="url(#wCv)" stroke="#b7c4d2" stroke-width="1.1"/>
+      <path d="M28.4 3.7v11.4h11.3" fill="#ccd7e3"/>
+      <rect x="9" y="25.5" width="24" height="12" rx="2.4" fill="#e5352b"/>
+      <text x="21" y="34.6" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="8.4" font-weight="700" fill="#fff">PDF</text>
+    </svg>`
+  }
+};
 
-                    // Status badge
-                    const badge = document.getElementById('status-badge');
-                    const statusColor = {
-                        online: 'bg-green-500/15 text-green-400',
-                        idle: 'bg-yellow-500/15 text-yellow-400',
-                        dnd: 'bg-red-500/15 text-red-400',
-                        offline: 'bg-gray-500/15 text-gray-400'
-                    };
-                    badge.className = `inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium mt-1 ${statusColor[user.discord_status] || 'bg-gray-500/15 text-gray-400'}`;
-                    badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${STATUS_RING[user.discord_status] || 'bg-gray-500'}"></span>${STATUS_LABEL[user.discord_status] || user.discord_status}`;
+const APPS = [
+  { id:'about',    title:'Hakkımda',    size:[760,600], desk:true,  pin:true,  render:renderAbout },
+  { id:'blog',     title:'Blog',        size:[780,620], desk:true,  pin:true,  render:renderBlog },
+  { id:'discord',  title:'Discord',     size:[680,500], desk:true,  pin:true,  render:renderDiscord },
+  { id:'htb',      title:'HackTheBox',  size:[700,540], desk:true,  pin:true,  render:renderHTB },
+  { id:'links',    title:'Bağlantılar', size:[640,480], desk:true,  pin:false, render:renderLinks },
+  { id:'contact',  title:'İletişim',    size:[640,470], desk:true,  pin:false, render:renderContact },
+  { id:'cv',       title:'CV.pdf',      size:[900,720], desk:true,  pin:false, render:renderCV, nopad:true },
+  { id:'settings', title:'Ayarlar',     size:[660,600], desk:false, pin:true,  render:renderSettings }
+];
+const appById = id => APPS.find(a => a.id === id);
 
-                    // Platform icons
-                    document.getElementById('platform-icons').innerHTML = renderPlatforms(user);
+function tile(app, size) {
+  const ic = ICONS[app.id] || ICONS.about;
+  if (ic.svg) return `<span class="tile" style="width:${size}px;height:${size}px">${ic.svg}</span>`;
+  const cls = ic.brand ? 'fa-brands' : 'fa-solid';
+  return `<span class="tile" style="background:${ic.bg};color:${ic.ink || '#fff'};width:${size}px;height:${size}px;font-size:${Math.round(size * .45)}px"><i class="${cls} ${ic.glyph}"></i></span>`;
+}
 
-                    // Custom status bubble
-                    const customStatus = user.activities?.find(a => a.type === 4);
-                    const customStatusEl = document.getElementById('discord-custom-status');
-                    if (customStatus && customStatus.state) {
-                        const emoji = customStatus.emoji?.name || '';
-                        const prev = customStatusEl.textContent;
-                        const next = `${emoji} ${customStatus.state}`;
-                        if (prev !== next) {
-                            customStatusEl.textContent = next;
-                            customStatusEl.classList.remove('hidden');
-                            // re-trigger animation
-                            customStatusEl.classList.remove('fade-in');
-                            void customStatusEl.offsetWidth;
-                            customStatusEl.classList.add('fade-in');
-                        }
-                    } else {
-                        customStatusEl.classList.add('hidden');
-                    }
+/* ═══════════════ Data loading ═══════════════ */
+function timeAgo(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (isNaN(d)) return '';
+  const s = Math.floor((Date.now() - d.getTime()) / 1000);
+  if (s < 60) return 'az önce';
+  const m = Math.floor(s / 60); if (m < 60) return `${m} dk önce`;
+  const h = Math.floor(m / 60); if (h < 24) return `${h} sa önce`;
+  const day = Math.floor(h / 24); if (day < 30) return `${day} gün önce`;
+  return d.toLocaleDateString('tr-TR');
+}
 
-                    // Activity
-                    const activityContainer = document.getElementById('discord-activity');
-                    const realActivities = user.activities?.filter(a => a.type !== 4) || [];
-                    if (realActivities.length > 0) {
-                        activityContainer.innerHTML = renderActivity(realActivities[0]);
-                    } else {
-                        activityContainer.innerHTML = '';
-                    }
-                }
-            } catch (error) {
-                console.error('Error fetching Discord status:', error);
-                document.getElementById('discord-username').textContent = 'Unable to load';
-            }
-        }
+async function loadDiscord() {
+  try {
+    const res = await fetch(LANYARD_API);
+    const data = await res.json();
+    if (data.success && data.data) {
+      state.discord = data.data;
+      refreshDiscordViews();
+    } else {
+      state.discord = false;
+      refreshDiscordViews();
+    }
+  } catch (e) { state.discord = false; refreshDiscordViews(); console.warn('discord', e); }
+}
 
-        // Fetch status on load and update every 30 seconds
-        fetchDiscordStatus();
-        setInterval(fetchDiscordStatus, 30000);
+async function loadPosts() {
+  try {
+    const res = await fetch(RSS_URL, { headers: { Accept: 'application/xml' } });
+    const text = await res.text();
+    const xml = new DOMParser().parseFromString(text, 'application/xml');
+    let nodes = Array.from(xml.querySelectorAll('item'));
+    const atom = nodes.length === 0;
+    if (atom) nodes = Array.from(xml.querySelectorAll('entry'));
 
-        async function fetchRSSPosts() {
-            try {
-                const res = await fetch(RSS_URL, { headers: { 'Accept': 'application/xml' } });
-                const text = await res.text();
-                const parser = new DOMParser();
-                const xml = parser.parseFromString(text, 'application/xml');
+    state.posts = nodes.slice(0, 8).map(n => {
+      const q = (sel) => n.querySelector(sel);
+      const title = (q('title')?.textContent || 'Başlıksız').trim();
+      let link = 'https://blog.dogukervan.me/';
+      if (atom) link = q('link')?.getAttribute('href') || link;
+      else link = q('link')?.textContent?.trim() || link;
+      const dateStr = (q('pubDate')?.textContent || q('updated')?.textContent || q('published')?.textContent || '').trim();
+      const raw = q('description')?.textContent || q('summary')?.textContent || q('content')?.textContent || '';
+      const excerpt = raw.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 150);
+      return { title, link, date: dateStr ? new Date(dateStr).toISOString() : null, excerpt };
+    });
 
-                // Try RSS 2.0 first
-                let items = Array.from(xml.querySelectorAll('item'));
-                // If Atom
-                if (items.length === 0) {
-                    items = Array.from(xml.querySelectorAll('entry'));
-                }
+    refreshPostViews();
+    if (state.posts[0]) {
+      pushNotif({
+        icon:'blog', title:'Yeni yazı',
+        body:`${state.posts[0].title}`,
+        link: state.posts[0].link
+      });
+    }
+  } catch (e) { state.posts = []; refreshPostViews(); console.warn('rss', e); }
+}
 
-                const postsEl = document.getElementById('rss-posts');
-                postsEl.innerHTML = '';
+async function loadHTB() {
+  // 1) jina.ai reader proxy — returns the API JSON inside a markdown wrapper
+  try {
+    const res = await fetch(`https://r.jina.ai/http://labs.hackthebox.com/api/v4/profile/${HTB_ID}`);
+    if (res.ok) {
+      const text = await res.text();
+      const i = text.indexOf('{"profile"');
+      if (i !== -1) {
+        const j = text.lastIndexOf('}');
+        const data = JSON.parse(text.slice(i, j + 1));
+        if (data.profile) { state.htb = data.profile; refreshHTBViews(); return; }
+      }
+    }
+  } catch (_) { /* fall through */ }
 
-                items.slice(0, 3).forEach(item => {
-                    const title = (item.querySelector('title')?.textContent || 'Untitled').trim();
-                    const link = (item.querySelector('link')?.textContent || item.querySelector('link')?.getAttribute('href') || '#').trim();
-                    const dateStr = (item.querySelector('pubDate')?.textContent || item.querySelector('updated')?.textContent || item.querySelector('published')?.textContent || '').trim();
-                    const date = dateStr ? new Date(dateStr) : null;
+  // 2) direct API (only works when HTB opens CORS)
+  try {
+    const res = await fetch(HTB_PROFILE, { headers: { accept: 'application/json' } });
+    if (res.ok) {
+      const data = JSON.parse(await res.text());
+      if (data && data.profile) { state.htb = data.profile; refreshHTBViews(); return; }
+    }
+  } catch (_) { /* fall through */ }
 
-                    const post = document.createElement('a');
-                    post.href = link;
-                    post.target = '_blank';
-                    post.className = 'flex items-start gap-4 p-4 rounded-xl border card-dark hover:scale-[1.01] transition-all';
-                    post.innerHTML = `
-                        <div class="bg-gray-700 p-3 rounded-full">
-                            <i class="fas fa-file-alt"></i>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="font-semibold text-lg">${title}</h3>
-                            ${date ? `<p class="text-sm opacity-60">${date.toLocaleDateString()}</p>` : ''}
-                        </div>
-                        <i class="fas fa-arrow-up-right-from-square opacity-60"></i>
-                    `;
-                    postsEl.appendChild(post);
-                });
+  state.htb = false;
+  refreshHTBViews();
+}
 
-                if (postsEl.children.length === 0) {
-                    postsEl.innerHTML = '<p class="opacity-70 text-sm">No posts found in RSS.</p>';
-                }
-            } catch (e) {
-                const postsEl = document.getElementById('rss-posts');
-                postsEl.innerHTML = '<p class="opacity-70 text-sm">Failed to load RSS feed.</p>';
-                console.error('RSS fetch error', e);
-            }
-        }
+/* ═══════════════ Discord rendering ═══════════════ */
+const STATUS_META = {
+  online:  { label:'Online',        dot:'dot-green',  pill:'pill-green'  },
+  idle:    { label:'Idle',          dot:'dot-yellow', pill:'pill-yellow' },
+  dnd:     { label:'Do Not Disturb',dot:'dot-red',    pill:'pill-red'    },
+  offline: { label:'Offline',       dot:'dot-gray',   pill:'pill-gray'   }
+};
+const TYPE_LABEL = { 0:'Playing', 1:'Streaming', 3:'Watching', 5:'Competing' };
+const TYPE_ICON  = { 0:'fa-gamepad', 1:'fa-twitch', 3:'fa-tv', 5:'fa-trophy' };
 
-        fetchRSSPosts();
+function avatarUrl(u, size = 128) {
+  if (!u?.discord_user?.avatar) return null;
+  return `https://cdn.discordapp.com/avatars/${u.discord_user.id}/${u.discord_user.avatar}.png?size=${size}`;
+}
 
-        async function fetchHTBStats() {
-            const container = document.getElementById('htb-stats-custom');
-            for (const url of HTB_ENDPOINTS) {
-                try {
-                    const res = await fetch(url, { headers: { 'accept': 'application/json' } });
-                    if (!res.ok) throw new Error(`Fetch failed: ${url}`);
-                    const text = await res.text();
-                    const data = JSON.parse(text);
-                    if (data && data.profile) {
-                        renderHTBCard(data.profile);
-                        return;
-                    }
-                } catch (e) {
-                    // try next
-                    continue;
-                }
-            }
-            console.error('HTB API fetch error: all endpoints failed');
-            container.innerHTML = '<p class="opacity-70 text-sm">HTB stats could not be loaded (CORS or API error).</p>';
-        }
+function assetUrl(appId, key) {
+  if (!key) return null;
+  if (key.startsWith('mp:external/')) {
+    const rest = key.slice('mp:external/'.length);
+    const i = rest.indexOf('/');
+    if (i === -1) return null;
+    return `https://media.discordapp.net/external/${rest.slice(0, i)}/${rest.slice(i + 1)}`;
+  }
+  if (appId) return `https://cdn.discordapp.com/app-assets/${appId}/${key}.png`;
+  return null;
+}
+function formatElapsed(start) {
+  const d = Date.now() - start;
+  if (d < 0) return '';
+  const h = Math.floor(d / 3600000), m = Math.floor((d % 3600000) / 60000);
+  return h > 0 ? `${h}s ${m}dk geçti` : (m > 0 ? `${m}dk geçti` : 'az önce başladı');
+}
+function spotifyProgress(start, end) {
+  const now = Date.now(), total = end - start, remain = end - now;
+  if (total <= 0 || remain <= 0) return null;
+  const pct = Math.min(100, Math.max(0, ((now - start) / total) * 100));
+  const m = Math.floor(remain / 60000), s = Math.floor((remain % 60000) / 1000);
+  return { pct, text: `-${m}:${String(s).padStart(2, '0')}` };
+}
 
-        function renderHTBCard(profile) {
-            const username = profile.name || 'Unknown';
-            const points = profile.points ?? '-';
-            const systemOwns = profile.system_owns ?? '-';
-            const userOwns = profile.user_owns ?? '-';
-            const rank = profile.rank || '-';
-            const nextRank = profile.next_rank || 'Next Rank';
-            const progressRaw = (typeof profile.current_rank_progress === 'number')
-                ? profile.current_rank_progress
-                : (profile.rank_requirement ? (profile.rank_ownership / profile.rank_requirement) * 100 : 0);
-            const progressPct = Math.max(0, Math.min(100, Math.round(progressRaw)));
+function activityCard(act) {
+  if (!act) return '';
+  if (act.type === 2) {
+    const img = assetUrl(null, act.assets?.large_image);
+    const p = act.timestamps ? spotifyProgress(act.timestamps.start, act.timestamps.end) : null;
+    return `<div class="act-card spotify">
+      <div class="act-top">
+        <span class="act-kind spot"><i class="fa-brands fa-spotify"></i> Spotify</span>
+        ${p ? `<span class="act-time">${p.text}</span>` : ''}
+      </div>
+      <div class="act-main">
+        ${img ? `<img src="${esc(img)}" onerror="this.remove()" alt="">` : ''}
+        <div class="txt">
+          <b>${esc(act.details || 'Bilinmeyen parça')}</b>
+          <p>${esc(act.state || '')}</p>
+        </div>
+      </div>
+      ${p ? `<div class="progress"><i style="width:${p.pct}%"></i></div>` : ''}
+    </div>`;
+  }
+  const label = TYPE_LABEL[act.type] || 'Playing';
+  const icon  = TYPE_ICON[act.type] || 'fa-gamepad';
+  const img   = assetUrl(act.application_id, act.assets?.large_image);
+  const el    = act.timestamps?.start ? formatElapsed(act.timestamps.start) : '';
+  return `<div class="act-card">
+    <div class="act-top">
+      <span class="act-kind"><i class="fa-solid ${icon}"></i> ${label}</span>
+      ${el ? `<span class="act-time">${el}</span>` : ''}
+    </div>
+    <div class="act-main">
+      ${img ? `<img src="${esc(img)}" onerror="this.remove()" alt="">` : ''}
+      <div class="txt">
+        <b>${esc(act.name)}</b>
+        ${act.details ? `<p>${esc(act.details)}</p>` : ''}
+        ${act.state ? `<p class="small">${esc(act.state)}</p>` : ''}
+        ${act.assets?.large_text ? `<p class="small" style="opacity:.65">${esc(act.assets.large_text)}</p>` : ''}
+      </div>
+    </div>
+  </div>`;
+}
 
-            const container = document.getElementById('htb-stats-custom');
-            container.innerHTML = `
-                <div class="rounded-xl border border-white/10 p-4">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="flex items-center gap-3">
-                            <div class="bg-green-600/20 text-green-300 px-3 py-1 rounded-full text-xs font-semibold">HTB</div>
-                            <h3 class="text-xl font-semibold">
-                                <a href="https://app.hackthebox.com/users/${HTB_ID}" target="_blank" rel="noopener" class="hover:underline">
-                                    ${username}
-                                </a>
-                            </h3>
-                        </div>
-                        <div class="text-right">
-                            <div class="text-sm opacity-70">Rank</div>
-                            <div class="font-semibold">${rank}</div>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
-                        <div class="card-dark border rounded-lg p-3">
-                            <div class="text-xs opacity-70 mb-1">Points</div>
-                            <div class="text-lg font-semibold flex items-center gap-2"><i class="fas fa-brain text-green-300"></i>${points}</div>
-                        </div>
-                        <div class="card-dark border rounded-lg p-3">
-                            <div class="text-xs opacity-70 mb-1">System Owns</div>
-                            <div class="text-lg font-semibold flex items-center gap-2"><i class="fas fa-desktop text-green-300"></i>${systemOwns}</div>
-                        </div>
-                        <div class="card-dark border rounded-lg p-3">
-                            <div class="text-xs opacity-70 mb-1">User Owns</div>
-                            <div class="text-lg font-semibold flex items-center gap-2"><i class="fas fa-user-ninja text-green-300"></i>${userOwns}</div>
-                        </div>
-                    </div>
-                    <div class="mb-1 flex items-center justify-between">
-                        <div class="text-sm opacity-70">Progress to ${nextRank}</div>
-                        <div class="text-sm opacity-70">${progressPct}%</div>
-                    </div>
-                    <div class="w-full h-2 bg-neutral-800 rounded-full overflow-hidden">
-                        <div class="h-full bg-green-500" style="width: ${progressPct}%"></div>
-                    </div>
-                </div>
-            `;
-        }
+function platforms(u) {
+  const out = [];
+  if (u.active_on_discord_desktop) out.push('<i class="fa-solid fa-desktop" title="Masaüstü"></i>');
+  if (u.active_on_discord_mobile)  out.push('<i class="fa-solid fa-mobile-screen" title="Mobil"></i>');
+  if (u.active_on_discord_web)     out.push('<i class="fa-solid fa-globe" title="Web"></i>');
+  return out.join(' ');
+}
 
-        fetchHTBStats();
-    </script>
+function discordBlock() {
+  const u = state.discord;
+  if (u === false) return `<div class="muted">Discord verisi alınamadı (Lanyard'a ulaşılamıyor).</div>`;
+  if (!u) return `<div class="muted">Discord durumu yükleniyor…</div>`;
+  const meta = STATUS_META[u.discord_status] || STATUS_META.offline;
+  const custom = (u.activities || []).find(a => a.type === 4);
+  const acts = (u.activities || []).filter(a => a.type !== 4);
+  const av = avatarUrl(u, 128);
+  const name = u.discord_user.global_name || u.discord_user.username;
+
+  return `
+    <div class="hero">
+      <div class="ring">
+        ${av ? `<img src="${esc(av)}" alt="${esc(name)}">` : `<span class="fallback">${esc(name.slice(0,2).toUpperCase())}</span>`}
+      </div>
+      <div style="min-width:0">
+        <div class="h1" style="margin:0">${esc(name)}</div>
+        <span class="status-pill ${meta.pill}"><i class="${meta.dot}"></i>${meta.label}</span>
+        <div style="margin-top:6px;font-size:11px;color:var(--text-dim);display:flex;gap:8px">${platforms(u)}</div>
+      </div>
+    </div>
+    ${custom?.state ? `<div class="bubble">${esc(custom.emoji?.name || '')} ${esc(custom.state)}</div>` : ''}
+    ${acts.length ? activityCard(acts[0]) : ''}
+  `;
+}
+
+function discordWidget() {
+  const u = state.discord;
+  if (u === false) return `<div class="dw-sub">veri alınamadı</div>`;
+  if (!u) return `<div class="dw-sub">yükleniyor…</div>`;
+
+  const meta = STATUS_META[u.discord_status] || STATUS_META.offline;
+  const ringColor = { online: '#23a55a', idle: '#f0b232', dnd: '#f23f43', offline: '#80848e' }[u.discord_status] || '#80848e';
+  const av = avatarUrl(u, 64);
+  const name = u.discord_user.global_name || u.discord_user.username;
+  const custom = (u.activities || []).find(a => a.type === 4);
+  const act = (u.activities || []).find(a => a.type !== 4);
+  const actImg = act ? assetUrl(act.application_id, act.assets?.large_image) : null;
+  const actText = act
+    ? (act.type === 2
+        ? [act.details, act.state].filter(Boolean).join(' · ')
+        : [act.name, act.details].filter(Boolean).join(' · '))
+    : '';
+
+  return `
+    <div class="dw-main">
+      <span class="dw-av">
+        ${av ? `<img src="${esc(av)}" alt="">` : `<span class="fallback">${esc(name.slice(0, 2).toUpperCase())}</span>`}
+        <span class="ring" style="border-color:${ringColor}"></span>
+      </span>
+      <span style="min-width:0">
+        <span class="dw-name">${esc(name)}</span>
+        <span class="dw-sub"><i class="${meta.dot}" style="display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:5px"></i>${meta.label}</span>
+      </span>
+    </div>
+    ${custom?.state ? `<div class="dw-custom">${esc(custom.emoji?.name || '')} ${esc(custom.state)}</div>` : ''}
+    ${act && actText ? `<div class="dw-act">
+      ${actImg ? `<img src="${esc(actImg)}" onerror="this.remove()" alt="">` : `<i class="fa-solid ${act.type === 2 ? 'fa-music' : (TYPE_ICON[act.type] || 'fa-gamepad')}"></i>`}
+      <span>${esc(actText)}</span>
+    </div>` : ''}
+  `;
+}
+
+function refreshDiscordViews() {
+  const body = document.querySelector('[data-body="discord"]');
+  if (body) body.innerHTML = discordBlock();
+
+  const about = document.querySelector('[data-body="about"]');
+  if (about && state.discord) about.innerHTML = renderAbout();
+
+  const dw = $('#dw-body');
+  if (dw) dw.innerHTML = discordWidget();
+
+  // avatar slots
+  const av = avatarUrl(state.discord, 64);
+  if (av) {
+    $('#start-avatar-slot').innerHTML = `<img src="${esc(av)}" alt="">`;
+    $('#lock-avatar').innerHTML = `<img src="${esc(av)}" alt="">`;
+  }
+}
+function rssWidget() {
+  const posts = state.posts;
+  if (!posts) return `<div class="dw-sub">yükleniyor…</div>`;
+  if (!posts.length) return `<div class="dw-sub">yazı bulunamadı</div>`;
+  return posts.slice(0, 4).map(p => `
+    <a class="rw-item" href="${esc(p.link)}" target="_blank" rel="noopener">
+      <span class="rw-title">${esc(p.title)}</span>
+      <span class="rw-date">${esc(timeAgo(p.date))}</span>
+    </a>`).join('');
+}
+
+function refreshPostViews() {
+  const posts = state.posts || [];
+
+  const body = document.querySelector('[data-body="blog"]');
+  if (body) body.innerHTML = blogBlock();
+
+  const rw = $('#rw-body');
+  if (rw) rw.innerHTML = rssWidget();
+
+  const rec = $('#start-rec');
+  if (rec) {
+    rec.innerHTML = posts.length
+      ? posts.slice(0, 4).map(p => `<a class="rec-item" href="${esc(p.link)}" target="_blank" rel="noopener">
+          ${tile({ id:'blog' }, 30)}
+          <span style="min-width:0"><b>${esc(p.title)}</b><small>${esc(timeAgo(p.date))}</small></span>
+        </a>`).join('')
+      : '<div class="muted" style="padding:8px 10px">Yazı bulunamadı.</div>';
+  }
+}
+function htbWidget() {
+  const p = state.htb;
+  if (p === null) return `<div class="dw-sub">yükleniyor…</div>`;
+  if (p === false) return `<div class="dw-sub">veri alınamadı</div>`;
+
+  const pct = htbPct();
+  return `
+    <div class="dw-main">
+      <span class="hw-badge">HTB</span>
+      <span style="min-width:0">
+        <span class="dw-name">${esc(p.name || 'Unknown')}</span>
+        <span class="dw-sub">${esc(String(p.rank || '-'))} · ${esc(String(p.points ?? '-'))} puan</span>
+      </span>
+    </div>
+    <div>
+      <div class="hw-line"><span>${esc(String(p.next_rank || 'Sonraki rütbe'))}</span><span>${pct}%</span></div>
+      <div class="hw-track"><i style="width:${pct}%"></i></div>
+    </div>
+    <div class="hw-stats">
+      <span><i class="fa-solid fa-desktop"></i>${esc(String(p.system_owns ?? '-'))}</span>
+      <span><i class="fa-solid fa-user-ninja"></i>${esc(String(p.user_owns ?? '-'))}</span>
+      <span style="margin-left:auto"><i class="fa-solid fa-ranking-star"></i>#${esc(String(p.ranking ?? '-'))}</span>
+    </div>`;
+}
+
+function refreshHTBViews() {
+  const body = document.querySelector('[data-body="htb"]');
+  if (body) body.innerHTML = htbBlock();
+
+  const hw = $('#hw-body');
+  if (hw) hw.innerHTML = htbWidget();
+}
+function htbPct() {
+  const p = state.htb;
+  if (!p) return 0;
+  const ratio = p.rank_requirement ? (p.rank_ownership / p.rank_requirement) * 100 : 0;
+  const raw = ratio > 0
+    ? ratio
+    : (typeof p.current_rank_progress === 'number' ? p.current_rank_progress : 0);
+  return Math.max(0, Math.min(100, Math.round(raw)));
+}
+
+/* ═══════════════ App views ═══════════════ */
+function renderAbout() {
+  const u = state.discord;
+  const name = u?.discord_user?.global_name || u?.discord_user?.username || 'Doğu Kervan';
+  const av = avatarUrl(u, 128);
+  const year = new Date().getFullYear();
+  const age = year - 2007;
+  const cyberYears = year - 2018;
+  return `
+    <div class="hero">
+      ${av ? `<img src="${esc(av)}" alt="">` : `<span class="fallback">DK</span>`}
+      <div>
+        <div class="h1">Doğu Kervan</div>
+        <div class="muted">Computer Engineering Student</div>
+        <div style="margin-top:8px;font-size:11.5px;color:var(--text-dim)">${u ? esc(name) + ' olarak Discord\'da' : 'İstanbul, Türkiye'}</div>
+      </div>
+    </div>
+    <p class="muted" style="font-size:13px;line-height:1.65">
+      I am Doğu Kervan and I am currently continuing my undergraduate education at Işık University, Department of Computer Science &amp; Engineering.
+      I am ${age} years old and I have been working in cybersecurity for ${cyberYears} years. My start in software was in my primary school’s STEM club.
+      Then, I started to develop websites and learn cybersecurity. In this process, I gained beginner level knowledge about most software fields.
+      I’m currently working on Web Pentesting. I was Chairman of Işık IEEE for 1 year. I led organizations and projects.
+    </p>
+    <div class="section-title">Hızlı bilgiler</div>
+    <dl class="kv">
+      <dt>E-posta</dt><dd><a href="mailto:root@dogukervan.me">root@dogukervan.me</a></dd>
+      <dt>Blog</dt><dd><a href="https://blog.dogukervan.me/" target="_blank" rel="noopener">blog.dogukervan.me</a></dd>
+      <dt>LinkedIn</dt><dd><a href="https://www.linkedin.com/in/do%C4%9Fu-kervan-79504b382" target="_blank" rel="noopener">doğu-kervan</a></dd>
+      <dt>HackTheBox</dt><dd><a href="https://app.hackthebox.com/public/users/${HTB_ID}" target="_blank" rel="noopener">profil</a></dd>
+    </dl>
+    <div class="btns">
+      <a class="btn primary" href="https://blog.dogukervan.me/" target="_blank" rel="noopener"><i class="fa-solid fa-newspaper"></i> Blogu aç</a>
+      <a class="btn" href="mailto:root@dogukervan.me"><i class="fa-solid fa-envelope"></i> E-posta</a>
+    </div>
+  `;
+}
+
+function blogBlock() {
+  if (!state.posts) return `<div class="muted">Yazılar yükleniyor…</div>`;
+  if (!state.posts.length) return `<div class="muted">Yazı bulunamadı.</div>`;
+  return `
+    <div class="muted" style="margin-bottom:14px">blog.dogukervan.me üzerinden canlı akış</div>
+    <div class="list">
+      ${state.posts.map(p => `
+        <a class="list-item" href="${esc(p.link)}" target="_blank" rel="noopener">
+          ${tile({ id:'blog' }, 34)}
+          <span style="min-width:0">
+            <b>${esc(p.title)}</b>
+            <small>${esc(p.excerpt || '')}</small>
+          </span>
+          <span style="display:flex;align-items:center;gap:10px">
+            <span class="post-date">${esc(timeAgo(p.date))}</span>
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </span>
+        </a>`).join('')}
+    </div>
+    <div class="btns"><a class="btn" href="https://blog.dogukervan.me/" target="_blank" rel="noopener">Tüm yazılar <i class="fa-solid fa-arrow-right"></i></a></div>
+  `;
+}
+function renderBlog() { return blogBlock(); }
+
+function renderDiscord() {
+  return `<div class="muted" style="margin-bottom:12px">Lanyard üzerinden canlı veri · 30 saniyede bir yenilenir</div>${discordBlock()}`;
+}
+
+function htbBlock() {
+  const p = state.htb;
+  if (p === null) return `<div class="muted">HackTheBox istatistikleri yükleniyor…</div>`;
+  if (p === false) return `<div class="muted">İstatistikler yüklenemedi (CORS veya API hatası).</div>`;
+  const pct = htbPct();
+  return `
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="htb-badge">HTB</span>
+        <div>
+          <div class="h1" style="margin:0"><a href="https://app.hackthebox.com/public/users/${HTB_ID}" target="_blank" rel="noopener" style="text-decoration:none">${esc(p.name || 'Unknown')}</a></div>
+          <div class="muted">${esc(String(p.rank || '-'))} rütbe</div>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div class="muted" style="font-size:11px">Sıradaki</div>
+        <div style="font-weight:600;font-size:13px">${esc(String(p.next_rank || '-'))}</div>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="stat"><small>Puan</small><b><i class="fa-solid fa-brain" style="color:#9fef00"></i>${esc(String(p.points ?? '-'))}</b></div>
+      <div class="stat"><small>System Owns</small><b><i class="fa-solid fa-desktop" style="color:#9fef00"></i>${esc(String(p.system_owns ?? '-'))}</b></div>
+      <div class="stat"><small>User Owns</small><b><i class="fa-solid fa-user-ninja" style="color:#9fef00"></i>${esc(String(p.user_owns ?? '-'))}</b></div>
+      <div class="stat"><small>Rütbe ilerlemesi</small><b>${pct}%</b></div>
+    </div>
+    <div style="margin-top:16px">
+      <div style="display:flex;justify-content:space-between;font-size:11.5px;color:var(--text-dim);margin-bottom:6px">
+        <span>${esc(String(p.next_rank || 'Sonraki rütbe'))}</span><span>${pct}%</span>
+      </div>
+      <div class="progress htb"><i style="width:${pct}%"></i></div>
+    </div>
+    <div class="btns"><a class="btn" href="https://app.hackthebox.com/public/users/${HTB_ID}" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square"></i> Profili aç</a></div>
+  `;
+}
+function renderHTB() { return htbBlock(); }
+
+function renderLinks() {
+  const items = [
+    { icon:'fa-newspaper', bg:'linear-gradient(135deg,#0ea5e9,#2563eb)', title:'Blog', sub:'blog.dogukervan.me', href:'https://blog.dogukervan.me/' },
+    { icon:'fa-linkedin-in', bg:'linear-gradient(135deg,#0a66c2,#378fe9)', title:'LinkedIn', sub:'Doğu Kervan', href:'https://www.linkedin.com/in/do%C4%9Fu-kervan-79504b382', brand:true },
+    { icon:'fa-discord', bg:'linear-gradient(135deg,#5865f2,#8b9dff)', title:'Discord', sub:'Marius', href:`https://discord.com/users/${DISCORD_ID}`, brand:true },
+    { icon:'fa-cube', bg:'linear-gradient(135deg,#9fef00,#3fd45f)', ink:'#13210a', title:'HackTheBox', sub:'2433453', href:`https://app.hackthebox.com/public/users/${HTB_ID}` },
+    { icon:'fa-envelope', bg:'linear-gradient(135deg,#f59e0b,#f97316)', title:'E-posta', sub:'root@dogukervan.me', href:'mailto:root@dogukervan.me' }
+  ];
+  return `<div class="muted" style="margin-bottom:14px">Beni bulabileceğin yerler.</div>
+    <div class="list">${items.map(i => `
+      <a class="list-item" href="${esc(i.href)}" target="_blank" rel="noopener">
+        <span class="tile" style="background:${i.bg};color:${i.ink || '#fff'}"><i class="${i.brand ? 'fa-brands' : 'fa-solid'} ${i.icon}"></i></span>
+        <span><b>${esc(i.title)}</b><small>${esc(i.sub)}</small></span>
+        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+      </a>`).join('')}</div>`;
+}
+
+function renderContact() {
+  return `
+    <div class="muted">Bir merhaba, bir soru, bir iş birliği — hepsine açığım.</div>
+    <div class="section-title">E-posta</div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <a class="btn primary" href="mailto:root@dogukervan.me"><i class="fa-solid fa-envelope"></i> root@dogukervan.me</a>
+      <button class="btn" id="copy-mail"><i class="fa-regular fa-copy"></i> Kopyala</button>
+    </div>
+    <div class="section-title">Diğer</div>
+    <div class="list">
+      <a class="list-item" href="https://www.linkedin.com/in/do%C4%9Fu-kervan-79504b382" target="_blank" rel="noopener">
+        <span class="tile" style="background:linear-gradient(135deg,#0a66c2,#378fe9)"><i class="fa-brands fa-linkedin-in"></i></span>
+        <span><b>LinkedIn</b><small>Profesyonel ağ</small></span><i class="fa-solid fa-arrow-up-right-from-square"></i>
+      </a>
+      <a class="list-item" href="https://blog.dogukervan.me/" target="_blank" rel="noopener">
+        <span class="tile" style="background:linear-gradient(135deg,#0ea5e9,#2563eb)"><i class="fa-solid fa-newspaper"></i></span>
+        <span><b>Blog</b><small>Yazılar ve notlar</small></span><i class="fa-solid fa-arrow-up-right-from-square"></i>
+      </a>
+    </div>
+  `;
+}
+
+function renderCV() {
+  return `<div class="pdfv">
+    <div class="pdfv-bar">
+      <span class="pdfv-name"><i class="fa-solid fa-file-pdf"></i> CV.pdf</span>
+      <span class="pdfv-hint">kaynak: cv.dogukervan.me</span>
+      <a class="btn" href="https://cv.dogukervan.me" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square"></i> Tarayıcıda aç</a>
+    </div>
+    <iframe class="pdfv-frame" src="https://cv.dogukervan.me" title="CV — Doğu Kervan" loading="lazy"></iframe>
+  </div>`;
+}
+
+/* Settings */
+function renderSettings() {
+  return `
+    <div class="section-title" style="margin-top:0">Kişiselleştirme</div>
+    <div class="set-row">
+      <div>Koyu tema<small>Koyu görünüm</small></div>
+      <button class="switch ${state.theme === 'dark' ? 'on' : ''}" data-set="theme" aria-label="Tema"></button>
+    </div>
+    <div class="set-row">
+      <div>Vurgu rengi<small>Pencereler ve görev çubuğu</small></div>
+      <div class="accent-dots" id="settings-accents"></div>
+    </div>
+    <div class="section-title">Sistem</div>
+    <div class="set-row"><div>Tarayıcı<small>${esc(navigator.userAgent.split(') ').pop() || 'Bilinmiyor')}</small></div><span class="chip">${innerWidth}×${innerHeight}</span></div>
+    <div class="set-row"><div>Çerezler<small>Bu masaüstü hiçbir veri saklamaz</small></div><span class="chip">0 çerez</span></div>
+    <div class="section-title">Hakkında</div>
+    <div class="muted">Arayüz <a href="https://github.com/Laaouatni/w11CSS" target="_blank" rel="noopener">w11CSS</a> (MIT) tasarımından esinlendi; sıfırdan yeniden yazıldı. Veriler Lanyard, blog RSS'i ve HackTheBox API'sinden canlı gelir.</div>
+    <div class="btns"><button class="btn" data-action="lock"><i class="fa-solid fa-lock"></i> Ekranı kilitle</button></div>
+  `;
+}
+
+/* ═══════════════ Window manager ═══════════════ */
+const winLayer = $('#win-layer');
+const wins = new Map();
+let zTop = 40;
+const SNAP_EDGE = 24;
+
+function setBody(id, html) {
+  const el = document.querySelector(`[data-body="${id}"]`);
+  if (el) el.innerHTML = html;
+}
+
+function openApp(id) {
+  const app = appById(id);
+  if (!app) return;
+
+  const existing = wins.get(id);
+  if (existing) {
+    existing.el.classList.remove('minimized');
+    focusWin(existing);
+    return;
+  }
+
+  const el = document.createElement('section');
+  el.className = 'win opening';
+  el.dataset.app = id;
+  el.innerHTML = `
+    <div class="win-titlebar">
+      <div class="win-app">
+        ${tile(app, 16)}
+        <span class="win-name">${esc(app.title)}</span>
+      </div>
+      <div class="win-controls">
+        <button class="wc" data-act="min" title="Simge durumuna küçült" aria-label="Küçült"><i class="fa-solid fa-minus"></i></button>
+        <button class="wc" data-act="max" title="Ekranı kapla" aria-label="Büyüt"><i class="fa-regular fa-square"></i></button>
+        <button class="wc close" data-act="close" title="Kapat" aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
+    <div class="win-body${app.nopad ? ' nopad' : ''}" data-body="${id}">${app.render()}</div>
+    <div class="rz rz-n"></div><div class="rz rz-e"></div><div class="rz rz-s"></div><div class="rz rz-w"></div>
+    <div class="rz rz-se"></div><div class="rz rz-sw"></div><div class="rz rz-ne"></div><div class="rz rz-nw"></div>
+  `;
+
+  const [w0, h0] = app.size;
+  const maxW = Math.min(w0, innerWidth - 40);
+  const maxH = Math.min(h0, innerHeight - 90);
+  const offset = (wins.size % 5) * 26;
+  const left = Math.max(16, Math.min(innerWidth - maxW - 16, (innerWidth - maxW) / 2 + offset - 40));
+  const top = Math.max(12, Math.min(innerHeight - maxH - 70, (innerHeight - maxH) / 2 + offset - 40));
+
+  el.style.width = maxW + 'px';
+  el.style.height = maxH + 'px';
+  el.style.left = left + 'px';
+  el.style.top = top + 'px';
+
+  winLayer.appendChild(el);
+  const rec = { id, el, app };
+  wins.set(id, rec);
+
+  bindWindow(rec);
+  focusWin(rec);
+  syncTaskbar();
+
+  // post-open hooks
+  requestAnimationFrame(() => {
+    if (id === 'blog') refreshPostViews();
+    if (id === 'discord') refreshDiscordViews();
+    if (id === 'htb') refreshHTBViews();
+    if (id === 'settings') wireSettingsBody();
+    if (id === 'about') refreshDiscordViews();
+    if (id === 'contact') wireCopyMail();
+  });
+
+  el.addEventListener('animationend', () => el.classList.remove('opening'), { once: true });
+}
+
+function focusWin(rec) {
+  wins.forEach(w => w.el.classList.remove('focused'));
+  rec.el.classList.add('focused');
+  rec.el.style.zIndex = ++zTop;
+  rec.el.classList.remove('minimized');
+  syncTaskbar();
+}
+
+function closeWin(id) {
+  const rec = wins.get(id);
+  if (!rec) return;
+  rec.el.remove();
+  wins.delete(id);
+  syncTaskbar();
+}
+
+function minimizeWin(id) {
+  const rec = wins.get(id);
+  if (!rec) return;
+  rec.el.classList.add('minimized');
+  rec.el.classList.remove('focused');
+  syncTaskbar();
+}
+
+function toggleMax(id) {
+  const rec = wins.get(id);
+  if (!rec) return;
+  const el = rec.el;
+  if (el.classList.contains('maxed')) {
+    const p = rec.prev;
+    el.classList.remove('maxed');
+    if (p) {
+      el.style.left = p.l; el.style.top = p.t;
+      el.style.width = p.w; el.style.height = p.h;
+    }
+  } else {
+    rec.prev = { l: el.style.left, t: el.style.top, w: el.style.width, h: el.style.height };
+    el.classList.add('maxed');
+    el.style.left = '0px'; el.style.top = '0px';
+    el.style.width = '100%'; el.style.height = '100%';
+  }
+}
+
+function bindWindow(rec) {
+  const el = rec.el;
+  const titlebar = el.querySelector('.win-titlebar');
+
+  el.addEventListener('pointerdown', () => focusWin(rec), true);
+
+  el.querySelectorAll('.wc').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const act = btn.dataset.act;
+      if (act === 'close') closeWin(rec.id);
+      if (act === 'min') minimizeWin(rec.id);
+      if (act === 'max') toggleMax(rec.id);
+    });
+  });
+
+  titlebar.addEventListener('dblclick', (e) => {
+    if (e.target.closest('.wc')) return;
+    toggleMax(rec.id);
+  });
+
+  /* Drag */
+  titlebar.addEventListener('pointerdown', (e) => {
+    if (e.target.closest('.wc')) return;
+    if (innerWidth <= 820) return;
+
+    const r = el.getBoundingClientRect();
+    let startX = e.clientX, startY = e.clientY;
+    let origL = r.left, origT = r.top;
+    let moved = false;
+    const wasMax = el.classList.contains('maxed');
+    const prev = rec.prev;
+
+    titlebar.setPointerCapture(e.pointerId);
+    el.style.transition = 'none';
+
+    const onMove = (ev) => {
+      const dx = ev.clientX - startX, dy = ev.clientY - startY;
+      if (!moved && Math.abs(dx) + Math.abs(dy) < 4) return;
+      moved = true;
+
+      if (wasMax && prev) {
+        // restore size under cursor
+        el.classList.remove('maxed');
+        const ratio = origL / Math.max(1, innerWidth);
+        el.style.width = prev.w;
+        el.style.height = prev.h;
+        origL = ev.clientX - parseFloat(prev.w) * ratio;
+        origT = ev.clientY - 16;
+        startX = ev.clientX; startY = ev.clientY;
+        el.style.left = origL + 'px';
+        el.style.top = origT + 'px';
+        return;
+      }
+
+      const w = el.offsetWidth, h = el.offsetHeight;
+      let nx = origL + dx, ny = origT + dy;
+      nx = Math.max(-w + 120, Math.min(innerWidth - 120, nx));
+      ny = Math.max(0, Math.min(innerHeight - 46 - 40, ny));
+      el.style.left = nx + 'px';
+      el.style.top = ny + 'px';
+      showSnapHint(ev.clientX, ev.clientY);
+    };
+
+    const onUp = (ev) => {
+      titlebar.removeEventListener('pointermove', onMove);
+      titlebar.removeEventListener('pointerup', onUp);
+      el.style.transition = '';
+      hideSnapHint();
+      if (!moved) return;
+
+      const x = ev.clientX, y = ev.clientY;
+      if (y <= 8) { el.classList.remove('maxed'); toggleMax(rec.id); }
+      else if (x <= 8) snapLeft(rec);
+      else if (x >= innerWidth - 8) snapRight(rec);
+    };
+
+    titlebar.addEventListener('pointermove', onMove);
+    titlebar.addEventListener('pointerup', onUp);
+  });
+
+  /* Resize */
+  el.querySelectorAll('.rz').forEach(h => {
+    h.addEventListener('pointerdown', (e) => {
+      if (el.classList.contains('maxed')) return;
+      e.preventDefault(); e.stopPropagation();
+      focusWin(rec);
+      const dir = h.className.replace('rz ', '').replace('rz', '');
+      const r = el.getBoundingClientRect();
+      const startX = e.clientX, startY = e.clientY;
+      const oL = r.left, oT = r.top, oW = r.width, oH = r.height;
+      h.setPointerCapture(e.pointerId);
+      el.style.transition = 'none';
+
+      const move = (ev) => {
+        const dx = ev.clientX - startX, dy = ev.clientY - startY;
+        let l = oL, t = oT, w = oW, hh = oH;
+        if (dir.includes('e')) w = Math.max(320, oW + dx);
+        if (dir.includes('s')) hh = Math.max(200, oH + dy);
+        if (dir.includes('w')) { w = Math.max(320, oW - dx); l = oL + (oW - w); }
+        if (dir.includes('n')) { hh = Math.max(200, oH - dy); t = oT + (oH - hh); }
+        el.style.width = w + 'px'; el.style.height = hh + 'px';
+        el.style.left = l + 'px'; el.style.top = t + 'px';
+      };
+      const up = () => {
+        h.removeEventListener('pointermove', move);
+        h.removeEventListener('pointerup', up);
+        el.style.transition = '';
+      };
+      h.addEventListener('pointermove', move);
+      h.addEventListener('pointerup', up);
+    });
+  });
+}
+
+function snapLeft(rec) {
+  const el = rec.el;
+  el.classList.remove('maxed');
+  el.style.left = '0px'; el.style.top = '0px';
+  el.style.width = '50%'; el.style.height = '100%';
+}
+function snapRight(rec) {
+  const el = rec.el;
+  el.classList.remove('maxed');
+  el.style.left = '50%'; el.style.top = '0px';
+  el.style.width = '50%'; el.style.height = '100%';
+}
+
+/* Snap hint */
+const hint = $('#snap-hint');
+function showSnapHint(x, y) {
+  const W = innerWidth, H = innerHeight - 48;
+  let rect = null;
+  if (y <= 8) rect = [0, 0, W, H];
+  else if (x <= 8) rect = [0, 0, W / 2, H];
+  else if (x >= W - 8) rect = [W / 2, 0, W / 2, H];
+  if (!rect) { hint.classList.remove('on'); return; }
+  hint.style.left = rect[0] + 'px';
+  hint.style.top = rect[1] + 'px';
+  hint.style.width = rect[2] + 'px';
+  hint.style.height = rect[3] + 'px';
+  hint.classList.add('on');
+}
+function hideSnapHint() { hint.classList.remove('on'); }
+
+/* ═══════════════ Taskbar ═══════════════ */
+const tbApps = $('#tb-apps');
+function buildTaskbar() {
+  tbApps.innerHTML = '';
+  APPS.filter(a => a.pin).forEach(app => {
+    const b = document.createElement('button');
+    b.className = 'tb-btn';
+    b.dataset.tb = app.id;
+    b.title = app.title;
+    b.setAttribute('aria-label', app.title);
+    b.innerHTML = `${tile(app, 24)}<span class="dot"></span>`;
+    b.addEventListener('click', () => {
+      const rec = wins.get(app.id);
+      if (!rec) return openApp(app.id);
+      if (rec.el.classList.contains('minimized')) { rec.el.classList.remove('minimized'); focusWin(rec); }
+      else if (rec.el.classList.contains('focused')) minimizeWin(app.id);
+      else focusWin(rec);
+    });
+    tbApps.appendChild(b);
+  });
+}
+function syncTaskbar() {
+  $$('.tb-btn[data-tb]').forEach(btn => {
+    const id = btn.dataset.tb;
+    const rec = wins.get(id);
+    btn.classList.toggle('running', !!rec);
+    btn.classList.toggle('focused', !!rec && !rec.el.classList.contains('minimized') && rec.el.classList.contains('focused'));
+  });
+}
+
+/* ═══════════════ Desktop icons ═══════════════ */
+const ICON_CELL_W = 96, ICON_CELL_H = 90, ICON_LEFT = 8, ICON_TOP = 8;
+const iconPositions = new Map();
+
+function buildDeskIcons() {
+  const wrap = $('#desk-icons');
+  wrap.innerHTML = '';
+  const apps = APPS.filter(a => a.desk);
+  const rows = Math.max(1, Math.floor((innerHeight - 48 - ICON_TOP) / ICON_CELL_H));
+
+  apps.forEach((app, i) => {
+    const b = document.createElement('button');
+    b.className = 'desk-icon';
+    b.title = app.title;
+    b.dataset.icon = app.id;
+    b.innerHTML = `${tile(app, 42)}<span>${esc(app.title)}</span>`;
+
+    const col = Math.floor(i / rows), row = i % rows;
+    const pos = iconPositions.get(app.id) || {
+      x: ICON_LEFT + col * ICON_CELL_W,
+      y: ICON_TOP + row * ICON_CELL_H
+    };
+    b.style.left = pos.x + 'px';
+    b.style.top = pos.y + 'px';
+
+    b.addEventListener('click', () => {
+      if (b.dataset.dragged === '1') { b.dataset.dragged = '0'; return; }
+      openApp(app.id);
+    });
+    makeIconDraggable(b);
+    wrap.appendChild(b);
+  });
+}
+
+function makeIconDraggable(el) {
+  el.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0) return;
+    e.preventDefault();
+
+    const startX = e.clientX, startY = e.clientY;
+    const startL = parseFloat(el.style.left) || 0;
+    const startT = parseFloat(el.style.top) || 0;
+    let moved = false;
+
+    el.setPointerCapture(e.pointerId);
+
+    const move = (ev) => {
+      const dx = ev.clientX - startX, dy = ev.clientY - startY;
+      if (!moved && Math.abs(dx) + Math.abs(dy) < 5) return;
+      moved = true;
+      el.classList.add('dragging');
+      const maxX = innerWidth - el.offsetWidth - 4;
+      const maxY = innerHeight - 48 - el.offsetHeight - 4;
+      el.style.left = Math.max(4, Math.min(maxX, startL + dx)) + 'px';
+      el.style.top  = Math.max(4, Math.min(maxY, startT + dy)) + 'px';
+    };
+
+    const up = () => {
+      el.removeEventListener('pointermove', move);
+      el.removeEventListener('pointerup', up);
+      el.classList.remove('dragging');
+      if (!moved) return;
+
+      el.dataset.dragged = '1';
+      const snap = (v, origin, cell) => Math.max(origin, Math.round((v - origin) / cell) * cell + origin);
+      const x = snap(parseFloat(el.style.left), ICON_LEFT, ICON_CELL_W);
+      const y = snap(parseFloat(el.style.top), ICON_TOP, ICON_CELL_H);
+      el.style.left = x + 'px';
+      el.style.top = y + 'px';
+      iconPositions.set(el.dataset.icon, { x, y });
+    };
+
+    el.addEventListener('pointermove', move);
+    el.addEventListener('pointerup', up);
+  });
+}
+
+/* ═══════════════ Start menu ═══════════════ */
+const startPanel = $('#start');
+const widgetsPanel = $('#widgets');
+const quickPanel = $('#quick');
+const notifPanel = $('#notif');
+const panels = [startPanel, widgetsPanel, quickPanel, notifPanel];
+
+function closePanels(except) {
+  panels.forEach(p => { if (p !== except) p.classList.remove('open'); });
+}
+function togglePanel(panel) {
+  const open = panel.classList.contains('open');
+  closePanels(panel);
+  panel.classList.toggle('open', !open);
+}
+
+function buildStart() {
+  const grid = $('#start-grid');
+  grid.innerHTML = '';
+  APPS.forEach(app => {
+    const b = document.createElement('button');
+    b.className = 'start-app';
+    b.dataset.startApp = app.id;
+    b.dataset.name = app.title.toLowerCase();
+    b.innerHTML = `${tile(app, 34)}<span>${esc(app.title)}</span>`;
+    b.addEventListener('click', () => { openApp(app.id); closePanels(); });
+    grid.appendChild(b);
+  });
+  wireStartSearch();
+}
+
+function wireStartSearch() {
+  const input = $('#start-search');
+  input.addEventListener('input', () => {
+    const q = input.value.trim().toLowerCase();
+    $$('#start-grid .start-app').forEach(b => {
+      b.style.display = b.dataset.name.includes(q) ? '' : 'none';
+    });
+    $$('#start-rec .rec-item').forEach(a => {
+      a.style.display = a.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+  });
+}
+
+/* ═══════════════ Theme / wallpaper / accent ═══════════════ */
+function setTheme(t) {
+  state.theme = t;
+  document.documentElement.dataset.theme = t;
+  const sw = document.querySelector('[data-set="theme"]');
+  if (sw) sw.classList.toggle('on', t === 'dark');
+  document.querySelectorAll('.qs-toggle[data-qs="theme"]').forEach(b => b.classList.toggle('on', t === 'dark'));
+}
+function setAccent(color) {
+  state.accent = color;
+  document.documentElement.style.setProperty('--accent', color);
+  renderDots();
+}
+const ACCENTS = ['#0078d4', '#038387', '#107c10', '#8764b8', '#c239b3', '#ff8c00', '#e81123'];
+function renderDots() {
+  const acc = $('#accent-dots');
+  if (acc) acc.innerHTML = ACCENTS.map(c =>
+    `<button data-accent="${c}" class="${c === state.accent ? 'sel' : ''}" style="background:${c}" aria-label="${c}"></button>`).join('');
+  const sAcc = $('#settings-accents');
+  if (sAcc) sAcc.innerHTML = ACCENTS.map(c =>
+    `<button data-accent="${c}" class="${c === state.accent ? 'sel' : ''}" style="background:${c}" aria-label="${c}"></button>`).join('');
+}
+
+document.addEventListener('click', (e) => {
+  const acc = e.target.closest('[data-accent]');
+  if (acc) { setAccent(acc.dataset.accent); return; }
+  const set = e.target.closest('[data-set]');
+  if (set) { setTheme(state.theme === 'dark' ? 'light' : 'dark'); return; }
+});
+
+/* ═══════════════ Quick settings ═══════════════ */
+function wireQuick() {
+  const bright = $('#brightness');
+  if (bright && !bright.dataset.wired) {
+    bright.dataset.wired = '1';
+    const apply = () => {
+      const v = Number(bright.value);
+      const dim = $('#dim');
+      if (dim) dim.style.opacity = ((100 - v) / 100 * 0.9).toFixed(3);
+    };
+    bright.addEventListener('input', apply);
+    apply();
+  }
+
+  document.querySelectorAll('.qs-toggle').forEach(btn => {
+    if (btn.dataset.wired) return;
+    btn.dataset.wired = '1';
+    btn.addEventListener('click', () => {
+      const k = btn.dataset.qs;
+      if (k === 'theme') { setTheme(state.theme === 'dark' ? 'light' : 'dark'); return; }
+      if (k === 'lock') { lockScreen(); closePanels(); return; }
+      btn.classList.toggle('on');
+    });
+  });
+}
+
+/* ═══════════════ Notifications & toasts ═══════════════ */
+function pushNotif(n, silent) {
+  state.notifications.unshift(n);
+  state.unread++;
+  renderNotifs();
+  if (!silent) toast(n);
+}
+function renderNotifs() {
+  const list = $('#notif-list');
+  if (!list) return;
+  if (!state.notifications.length) {
+    list.innerHTML = '<div class="muted">Yeni bildirim yok.</div>';
+  } else {
+    list.innerHTML = state.notifications.map(n => `
+      <div class="notif-card">
+        ${tile({ id: n.icon || 'blog' }, 26)}
+        <div>
+          <b>${esc(n.title)}</b>
+          <p>${esc(n.body)}${n.link ? ` — <a href="${esc(n.link)}" target="_blank" rel="noopener">aç</a>` : ''}</p>
+        </div>
+      </div>`).join('');
+  }
+  const badge = $('#notif-count');
+  badge.textContent = state.unread > 9 ? '9+' : String(state.unread);
+  badge.style.display = state.unread ? 'grid' : 'none';
+}
+function toast(n) {
+  const wrap = $('#toasts');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = `
+    ${tile({ id: n.icon || 'blog' }, 28)}
+    <div>
+      <b>${esc(n.title)}</b>
+      <p>${esc(n.body)}${n.link ? ` — <a href="${esc(n.link)}" target="_blank" rel="noopener">aç</a>` : ''}</p>
+    </div>`;
+  wrap.appendChild(el);
+  setTimeout(() => {
+    el.classList.add('out');
+    setTimeout(() => el.remove(), 300);
+  }, 5200);
+}
+$('#tb-bell')?.addEventListener('click', () => {
+  togglePanel(notifPanel);
+  if (notifPanel.classList.contains('open')) {
+    state.unread = 0;
+    renderNotifs();
+  }
+});
+
+/* ═══════════════ Clock ═══════════════ */
+function tick() {
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2, '0');
+  const mm = String(now.getMinutes()).padStart(2, '0');
+  const t = `${hh}:${mm}`;
+  const dateStr = now.toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const longDate = now.toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'long' });
+
+  $('#clock-time').textContent = t;
+  $('#clock-date').textContent = dateStr;
+  const wt = $('#w-time'); if (wt) wt.textContent = t;
+  const wd = $('#w-date'); if (wd) wd.textContent = longDate;
+  $('#lock-time').textContent = t;
+  $('#lock-date').textContent = longDate;
+  const sys = $('#w-sys');
+  if (sys) {
+    const up = Math.floor(performance.now() / 1000);
+    const h = Math.floor(up / 3600), m = Math.floor((up % 3600) / 60), s = up % 60;
+    sys.textContent = `${innerWidth}×${innerHeight} · oturum ${h}s ${m}dk ${s}sn · tema ${state.theme}`;
+  }
+}
+
+/* ═══════════════ Lock / power ═══════════════ */
+const lockEl = $('#lock');
+lockEl.addEventListener('click', () => lockEl.classList.add('hidden'));
+function lockScreen() { lockEl.classList.remove('hidden'); }
+function showPowerMenu() {
+  const ctx = $('#ctx');
+  ctx.innerHTML = `
+    <button data-power="lock"><i class="fa-solid fa-lock"></i>Kilitle</button>
+    <button data-power="restart"><i class="fa-solid fa-rotate-right"></i>Yeniden başlat</button>
+    <button data-power="off"><i class="fa-solid fa-power-off"></i>Kapat</button>`;
+  const r = $('#power-btn').getBoundingClientRect();
+  ctx.style.left = Math.max(8, r.right - 220) + 'px';
+  ctx.style.top = (r.top - 132) + 'px';
+  ctx.classList.add('open');
+}
+document.addEventListener('click', (e) => {
+  const p = e.target.closest('[data-power]');
+  if (!p) return;
+  closePanels();
+  $('#ctx').classList.remove('open');
+  if (p.dataset.power === 'lock') lockScreen();
+  if (p.dataset.power === 'restart') location.reload();
+  if (p.dataset.power === 'off') {
+    $('#off').classList.add('on');
+    setTimeout(() => { /* stays until click */ }, 10);
+  }
+});
+$('#off').addEventListener('click', () => {
+  $('#off').classList.remove('on');
+  lockScreen();
+});
+
+/* ═══════════════ Context menu ═══════════════ */
+const ctx = $('#ctx');
+document.addEventListener('contextmenu', (e) => {
+  if (e.target.closest('.win')) return;
+  e.preventDefault();
+  ctx.innerHTML = `
+    <button data-ctx="refresh"><i class="fa-solid fa-rotate"></i>Yenile</button>
+      <div class="sep"></div>
+    <button data-ctx="settings"><i class="fa-solid fa-gear"></i>Kişiselleştir</button>
+      <div class="sep"></div>
+    <button data-ctx="lock"><i class="fa-solid fa-lock"></i>Ekranı kilitle</button>`;
+  ctx.style.left = Math.min(e.clientX, innerWidth - 236) + 'px';
+  ctx.style.top = Math.min(e.clientY, innerHeight - 220) + 'px';
+  ctx.classList.add('open');
+});
+document.addEventListener('click', (e) => {
+  const item = e.target.closest('[data-ctx]');
+  if (item) {
+    const k = item.dataset.ctx;
+    if (k === 'refresh') location.reload();
+    if (k === 'settings') openApp('settings');
+    if (k === 'lock') lockScreen();
+  }
+  if (!e.target.closest('#ctx')) ctx.classList.remove('open');
+});
+
+/* ═══════════════ Start / widgets buttons ═══════════════ */
+$('#start-btn').addEventListener('click', () => togglePanel(startPanel));
+$('#search-btn').addEventListener('click', () => { togglePanel(startPanel); setTimeout(() => $('#start-search')?.focus(), 120); });
+$('#widgets-btn').addEventListener('click', () => togglePanel(widgetsPanel));
+$('#discord-widget').addEventListener('click', () => openApp('discord'));
+$('#discord-widget').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openApp('discord'); }
+});
+$('#htb-widget').addEventListener('click', () => openApp('htb'));
+$('#htb-widget').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openApp('htb'); }
+});
+$('#tray-btn').addEventListener('click', () => togglePanel(quickPanel));
+$('#clock').addEventListener('click', () => { togglePanel(notifPanel); state.unread = 0; renderNotifs(); });
+$('#power-btn').addEventListener('click', (e) => { e.stopPropagation(); showPowerMenu(); });
+$('#start-user').addEventListener('click', () => { openApp('about'); closePanels(); });
+$('#all-apps').addEventListener('click', () => { $('#start-search').focus(); });
+
+document.addEventListener('pointerdown', (e) => {
+  if (e.target.closest('.panel') || e.target.closest('#taskbar') || e.target.closest('#ctx')) return;
+  closePanels();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') { closePanels(); ctx.classList.remove('open'); }
+});
+
+/* ═══════════════ Contact helpers ═══════════════ */
+function wireCopyMail() {
+  const b = $('#copy-mail');
+  if (!b) return;
+  b.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText('root@dogukervan.me');
+      b.innerHTML = '<i class="fa-solid fa-check"></i> Kopyalandı';
+      setTimeout(() => { b.innerHTML = '<i class="fa-regular fa-copy"></i> Kopyala'; }, 1800);
+    } catch { b.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Kopyalanamadı'; }
+  });
+}
+
+/* ═══════════════ Settings body wiring ═══════════════ */
+function wireSettingsBody() {
+  renderDots();
+  wireQuick();
+  const lockBtn = document.querySelector('[data-action="lock"]');
+  if (lockBtn) lockBtn.addEventListener('click', lockScreen);
+}
+
+/* ═══════════════ Boot ═══════════════ */
+function boot() {
+  buildTaskbar();
+  buildDeskIcons();
+  buildStart();
+  renderDots();
+  wireQuick();
+  renderNotifs();
+  tick();
+  setInterval(tick, 1000);
+
+  setTimeout(() => $('#boot').classList.add('hidden'), 900);
+
+  loadDiscord();
+  loadPosts();
+  loadHTB();
+  setInterval(loadDiscord, 30000);
+  setInterval(loadHTB, 120000);
+
+  setTimeout(() => {
+    toast({ icon:'about', title:'Hoş geldin', body:'Masaüstünde gezinmek için ikonlara tıkla. Sağ tık ile kişiselleştir.' });
+    pushNotif({ icon:'about', title:'Hoş geldin', body:'Bu masaüstü tamamen çerezsiz çalışır.' }, true);
+  }, 1600);
+}
+
+boot();
+</script>
 </body>
 </html>

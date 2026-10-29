@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doğu Kervan - Blog</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .pulse-slow {
+            animation: pulse-slow 2s ease-in-out infinite;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.35s ease-out;
+        }
+        :root { color-scheme: dark; }
+        .card-dark { background: rgba(20,20,20,0.7); border-color: rgba(255,255,255,0.08); }
+        .card-dark:hover { background: rgba(32,32,32,0.9); }
+        .bubble {
+            position: relative;
+            background: rgba(99, 102, 241, 0.10);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            border-radius: 14px;
+            max-width: 260px;
+            line-height: 1.4;
+        }
+        .bubble::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 22px;
+            width: 10px;
+            height: 10px;
+            background: rgba(99, 102, 241, 0.10);
+            border-top: 1px solid rgba(99, 102, 241, 0.15);
+            border-left: 1px solid rgba(99, 102, 241, 0.15);
+            transform: rotate(45deg);
+        }
+        .progress-bar {
+            transition: width 30s linear;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-black text-white">
+    <div class="container mx-auto px-4 py-12 max-w-4xl">
+        <!-- Header Section -->
+        <header class="text-center mb-12">
+            <h1 class="text-5xl md:text-6xl font-bold mb-4">Doğu Kervan</h1>
+            <p class="text-xl md:text-2xl opacity-70">Studying Computer Engineering at Işık University.</p>
+        </header>
+
+        <!-- Discord Status Card -->
+        <div class="card-dark backdrop-blur-md rounded-2xl p-6 mb-8 shadow-2xl border">
+            <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+                <i class="fab fa-discord text-indigo-300"></i>
+                Discord Status
+            </h2>
+            <div id="discord-status" class="flex flex-col md:flex-row gap-6">
+                <!-- Left: User info -->
+                <div class="flex flex-col items-center md:items-start gap-2.5 shrink-0">
+                    <div class="flex items-center gap-3">
+                        <div class="relative shrink-0">
+                            <div id="avatar-ring" class="absolute -inset-[3px] rounded-full opacity-0 transition-opacity duration-500"></div>
+                            <img id="discord-avatar" src="" alt="Discord Avatar" class="relative w-[68px] h-[68px] rounded-full hidden z-10">
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-lg font-bold leading-tight truncate" id="discord-username">Loading...</p>
+                            <span id="status-badge" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium mt-1">Fetching...</span>
+                            <div id="platform-icons" class="flex items-center gap-1.5 mt-1.5 text-white/40 text-xs"></div>
+                        </div>
+                    </div>
+                    <p class="bubble px-3 py-2 text-sm hidden fade-in" id="discord-custom-status"></p>
+                </div>
+                <!-- Right: Activity -->
+                <div id="discord-activity" class="flex-1 min-w-0 w-full">
+                    <!-- Activity renders here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Latest Posts from RSS -->
+        <div class="card-dark backdrop-blur-md rounded-2xl p-6 mb-8 shadow-2xl border">
+            <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+                <i class="fas fa-newspaper text-gray-300"></i>
+                Latest Posts
+            </h2>
+            <div id="rss-posts" class="space-y-4">
+                <p class="opacity-70 text-sm">Loading latest posts...</p>
+            </div>
+        </div>
+
+        <!-- Blog & Social Links -->
+        <div class="grid md:grid-cols-2 gap-6 mb-8">
+            <!-- RSS Feed Card -->
+            <a href="https://blog.dogukervan.me/" target="_blank" 
+               class="card-dark backdrop-blur-md rounded-2xl p-6 shadow-2xl border hover:scale-105 transition-all duration-300">
+                <div class="flex items-center gap-4">
+                    <div >
+                        <i class="fas fa-calendar text-3xl text-white"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold">Blog</h3>
+                        <p class="opacity-70">Read my articles.</p>
+                    </div>
+                </div>
+            </a>
+
+            <!-- LinkedIn Card -->
+            <a href="https://www.linkedin.com/in/do%C4%9Fu-kervan-79504b382" target="_blank"
+               class="card-dark backdrop-blur-md rounded-2xl p-6 shadow-2xl border hover:scale-105 transition-all duration-300">
+                <div class="flex items-center gap-4">
+                    <div>
+                        <i class="fab fa-linkedin text-3xl text-white"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold">LinkedIn</h3>
+                        <p class="opacity-70">Connect with me professionally</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        
+
+        <!-- HackTheBox Stats (HTB API direct JSON) -->
+        <section class="card-dark backdrop-blur-md rounded-2xl p-6 shadow-2xl border mb-8" href="google.com"">
+            <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+                <i class="fas fa-chart-line text-green-300"></i>
+                HackTheBox Stats
+            </h2>
+            <div id="htb-stats-custom" class="w-full">
+                <p class="opacity-70 text-sm">Loading HackTheBox stats...</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center mt-12 opacity-75">
+            <p>&copy; 2025 Doğu Kervan. All rights reserved.</p>
+            <p class="mt-2">
+                <i class="fas fa-envelope"></i>
+                <a href="mailto:dogu.kervan@computer.org" class="underline hover:no-underline">dogu.kervan@computer.org</a>
+            </p>
+            <!-- Badges Row (user-provided GIFs) -->
+            <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
+                <!-- Get free 7-Zip GIF (clickable) -->
+                <a href="https://www.7-zip.org/" target="_blank" rel="noopener noreferrer" class="hover:opacity-90" title="Get free 7-Zip">
+                    <img src="./7zip.gif" alt="Get free 7-Zip" class="h-10">
+                </a>
+
+                <!-- Best VW / retro style GIF -->
+                <span class="hover:opacity-90" title="bestvw">
+                    <img src="./bestvw.gif" alt="bestvw" class="h-10">
+                </span>
+
+                <!-- 100% cookie-free GIF -->
+                <span class="hover:opacity-90" title="This site is certified 100% cookie free!">
+                    <img src="./nocookie.gif" alt="This site is certified 100% cookie free!" class="h-10">
+                </span>
+                <!-- postmarketOS -->
+                    <a href="https://postmarketos.org" target="_blank" rel="noopener noreferrer" class="hover:opacity-90" title="I'm using postmarketOS">
+                    <img src="./pmos.png" alt="I'm using postmarketOS" class="h-10">
+                </a>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const DISCORD_ID = '1401588534007300310';
+        const LANYARD_API = `https://api.lanyard.rest/v1/users/${DISCORD_ID}`;
+        const RSS_URL = 'https://blog.dogukervan.me/feed.xml';
+        const HTB_ID = '2433453';
+        const HTB_PROFILE_API = `https://labs.hackthebox.com/api/v4/profile/${HTB_ID}`;
+        // Use CORS-friendly mirrors first, then fall back to direct API
+        const HTB_ENDPOINTS = [
+            `https://r.jina.ai/http://labs.hackthebox.com/api/v4/profile/${HTB_ID}`,
+            `https://cors.isomorphic-git.org/https://labs.hackthebox.com/api/v4/profile/${HTB_ID}`,
+            `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://labs.hackthebox.com/api/v4/profile/${HTB_ID}`)}`,
+            HTB_PROFILE_API
+        ];
+
+        // ── Helpers ──────────────────────────────────────────────
+        function assetUrl(appId, key) {
+            if (!key) return null;
+            if (key.startsWith('mp:external/')) {
+                const rest = key.slice('mp:external/'.length);
+                const slash = rest.indexOf('/');
+                if (slash === -1) return null;
+                return `https://media.discordapp.net/external/${rest.slice(0, slash)}/${rest.slice(slash + 1)}`;
+            }
+            if (appId) return `https://cdn.discordapp.com/app-assets/${appId}/${key}.png`;
+            return null;
+        }
+
+        function formatElapsed(startMs) {
+            const diff = Date.now() - startMs;
+            if (diff < 0) return '';
+            const h = Math.floor(diff / 3600000);
+            const m = Math.floor((diff % 3600000) / 60000);
+            if (h > 0) return `${h}h ${m}m elapsed`;
+            if (m > 0) return `${m}m elapsed`;
+            return 'just started';
+        }
+
+        function formatSpotifyRemaining(startMs, endMs) {
+            const now = Date.now();
+            const remaining = endMs - now;
+            const total = endMs - startMs;
+            if (remaining <= 0 || total <= 0) return null;
+            const pct = Math.min(100, Math.max(0, ((now - startMs) / total) * 100));
+            const min = Math.floor(remaining / 60000);
+            const sec = Math.floor((remaining % 60000) / 1000);
+            return { pct, text: `-${min}:${sec.toString().padStart(2, '0')}` };
+        }
+
+        const TYPE_LABEL = { 0: 'Playing', 1: 'Streaming', 3: 'Watching', 5: 'Competing' };
+        const TYPE_ICON  = { 0: 'fa-gamepad', 1: 'fa-twitch', 3: 'fa-tv', 5: 'fa-trophy' };
+        const STATUS_RING = { online: 'bg-green-500', idle: 'bg-yellow-500', dnd: 'bg-red-500', offline: 'bg-gray-500' };
+        const STATUS_LABEL = { online: 'Online', idle: 'Idle', dnd: 'Do Not Disturb', offline: 'Offline' };
+
+        function renderActivity(activity) {
+            if (activity.type === 2) return renderSpotify(activity);
+
+            const label = TYPE_LABEL[activity.type] || 'Playing';
+            const icon  = TYPE_ICON[activity.type] || 'fa-gamepad';
+            const img   = assetUrl(activity.application_id, activity.assets?.large_image);
+            const elapsed = activity.timestamps?.start ? formatElapsed(activity.timestamps.start) : '';
+
+            return `
+                <div class="bg-white/5 rounded-xl p-4 border border-white/5 w-full fade-in">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-wider opacity-50 font-medium">
+                            <i class="fas ${icon}"></i> ${label}
+                        </span>
+                        ${elapsed ? `<span class="text-[11px] opacity-40 tabular-nums">${elapsed}</span>` : ''}
+                    </div>
+                    <div class="flex gap-3.5">
+                        ${img ? `<img src="${img}" class="w-[60px] h-[60px] rounded-lg object-cover shrink-0 bg-white/5" onerror="this.remove()" alt="">` : ''}
+                        <div class="flex-1 min-w-0">
+                            <p class="font-semibold text-[15px] leading-snug truncate">${activity.name}</p>
+                            ${activity.details ? `<p class="text-[13px] opacity-70 truncate mt-0.5">${activity.details}</p>` : ''}
+                            ${activity.state   ? `<p class="text-[13px] opacity-50 truncate mt-0.5">${activity.state}</p>`   : ''}
+                            ${activity.assets?.large_text ? `<p class="text-[11px] opacity-40 truncate mt-1">${activity.assets.large_text}</p>` : ''}
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        function renderSpotify(activity) {
+            const img = assetUrl(null, activity.assets?.large_image);
+            const prog = activity.timestamps
+                ? formatSpotifyRemaining(activity.timestamps.start, activity.timestamps.end)
+                : null;
+
+            return `
+                <div class="bg-green-500/5 rounded-xl p-4 border border-green-500/10 w-full fade-in">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-wider text-green-400 font-medium">
+                            <i class="fab fa-spotify"></i> Listening to Spotify
+                        </span>
+                        ${prog ? `<span class="text-[11px] text-green-400/50 tabular-nums font-mono">${prog.text}</span>` : ''}
+                    </div>
+                    <div class="flex gap-3.5">
+                        ${img ? `<img src="${img}" class="w-[60px] h-[60px] rounded-lg object-cover shrink-0 bg-white/5" onerror="this.remove()" alt="">` : ''}
+                        <div class="flex-1 min-w-0">
+                            <p class="font-semibold text-[15px] leading-snug truncate">${activity.details || 'Unknown Track'}</p>
+                            <p class="text-[13px] opacity-70 truncate mt-0.5">${activity.state || ''}</p>
+                            ${prog ? `
+                                <div class="mt-2.5 h-1 bg-white/10 rounded-full overflow-hidden">
+                                    <div class="h-full bg-green-400 rounded-full progress-bar" style="width:${prog.pct}%"></div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        function renderPlatforms(user) {
+            const icons = [];
+            if (user.active_on_discord_desktop)  icons.push('<i class="fas fa-desktop" title="Desktop"></i>');
+            if (user.active_on_discord_mobile)   icons.push('<i class="fas fa-mobile-alt" title="Mobile"></i>');
+            if (user.active_on_discord_web)      icons.push('<i class="fas fa-globe" title="Web"></i>');
+            return icons.join('');
+        }
+
+        // ── Fetch ───────────────────────────────────────────────
+        async function fetchDiscordStatus() {
+            try {
+                const response = await fetch(LANYARD_API);
+                const data = await response.json();
+
+                if (data.success && data.data) {
+                    const user = data.data;
+
+                    // Avatar
+                    const av = document.getElementById('discord-avatar');
+                    av.src = `https://cdn.discordapp.com/avatars/${user.discord_user.id}/${user.discord_user.avatar}.png?size=128`;
+                    av.classList.remove('hidden');
+
+                    // Avatar ring — status-colored
+                    const ring = document.getElementById('avatar-ring');
+                    ring.className = `absolute -inset-[3px] rounded-full opacity-100 transition-opacity duration-500 ${STATUS_RING[user.discord_status] || 'bg-gray-500'}`;
+
+                    // Username
+                    document.getElementById('discord-username').textContent =
+                        user.discord_user.global_name || user.discord_user.username;
+
+                    // Status badge
+                    const badge = document.getElementById('status-badge');
+                    const statusColor = {
+                        online: 'bg-green-500/15 text-green-400',
+                        idle: 'bg-yellow-500/15 text-yellow-400',
+                        dnd: 'bg-red-500/15 text-red-400',
+                        offline: 'bg-gray-500/15 text-gray-400'
+                    };
+                    badge.className = `inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium mt-1 ${statusColor[user.discord_status] || 'bg-gray-500/15 text-gray-400'}`;
+                    badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${STATUS_RING[user.discord_status] || 'bg-gray-500'}"></span>${STATUS_LABEL[user.discord_status] || user.discord_status}`;
+
+                    // Platform icons
+                    document.getElementById('platform-icons').innerHTML = renderPlatforms(user);
+
+                    // Custom status bubble
+                    const customStatus = user.activities?.find(a => a.type === 4);
+                    const customStatusEl = document.getElementById('discord-custom-status');
+                    if (customStatus && customStatus.state) {
+                        const emoji = customStatus.emoji?.name || '';
+                        const prev = customStatusEl.textContent;
+                        const next = `${emoji} ${customStatus.state}`;
+                        if (prev !== next) {
+                            customStatusEl.textContent = next;
+                            customStatusEl.classList.remove('hidden');
+                            // re-trigger animation
+                            customStatusEl.classList.remove('fade-in');
+                            void customStatusEl.offsetWidth;
+                            customStatusEl.classList.add('fade-in');
+                        }
+                    } else {
+                        customStatusEl.classList.add('hidden');
+                    }
+
+                    // Activity
+                    const activityContainer = document.getElementById('discord-activity');
+                    const realActivities = user.activities?.filter(a => a.type !== 4) || [];
+                    if (realActivities.length > 0) {
+                        activityContainer.innerHTML = renderActivity(realActivities[0]);
+                    } else {
+                        activityContainer.innerHTML = '';
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching Discord status:', error);
+                document.getElementById('discord-username').textContent = 'Unable to load';
+            }
+        }
+
+        // Fetch status on load and update every 30 seconds
+        fetchDiscordStatus();
+        setInterval(fetchDiscordStatus, 30000);
+
+        async function fetchRSSPosts() {
+            try {
+                const res = await fetch(RSS_URL, { headers: { 'Accept': 'application/xml' } });
+                const text = await res.text();
+                const parser = new DOMParser();
+                const xml = parser.parseFromString(text, 'application/xml');
+
+                // Try RSS 2.0 first
+                let items = Array.from(xml.querySelectorAll('item'));
+                // If Atom
+                if (items.length === 0) {
+                    items = Array.from(xml.querySelectorAll('entry'));
+                }
+
+                const postsEl = document.getElementById('rss-posts');
+                postsEl.innerHTML = '';
+
+                items.slice(0, 3).forEach(item => {
+                    const title = (item.querySelector('title')?.textContent || 'Untitled').trim();
+                    const link = (item.querySelector('link')?.textContent || item.querySelector('link')?.getAttribute('href') || '#').trim();
+                    const dateStr = (item.querySelector('pubDate')?.textContent || item.querySelector('updated')?.textContent || item.querySelector('published')?.textContent || '').trim();
+                    const date = dateStr ? new Date(dateStr) : null;
+
+                    const post = document.createElement('a');
+                    post.href = link;
+                    post.target = '_blank';
+                    post.className = 'flex items-start gap-4 p-4 rounded-xl border card-dark hover:scale-[1.01] transition-all';
+                    post.innerHTML = `
+                        <div class="bg-gray-700 p-3 rounded-full">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-lg">${title}</h3>
+                            ${date ? `<p class="text-sm opacity-60">${date.toLocaleDateString()}</p>` : ''}
+                        </div>
+                        <i class="fas fa-arrow-up-right-from-square opacity-60"></i>
+                    `;
+                    postsEl.appendChild(post);
+                });
+
+                if (postsEl.children.length === 0) {
+                    postsEl.innerHTML = '<p class="opacity-70 text-sm">No posts found in RSS.</p>';
+                }
+            } catch (e) {
+                const postsEl = document.getElementById('rss-posts');
+                postsEl.innerHTML = '<p class="opacity-70 text-sm">Failed to load RSS feed.</p>';
+                console.error('RSS fetch error', e);
+            }
+        }
+
+        fetchRSSPosts();
+
+        async function fetchHTBStats() {
+            const container = document.getElementById('htb-stats-custom');
+            for (const url of HTB_ENDPOINTS) {
+                try {
+                    const res = await fetch(url, { headers: { 'accept': 'application/json' } });
+                    if (!res.ok) throw new Error(`Fetch failed: ${url}`);
+                    const text = await res.text();
+                    const data = JSON.parse(text);
+                    if (data && data.profile) {
+                        renderHTBCard(data.profile);
+                        return;
+                    }
+                } catch (e) {
+                    // try next
+                    continue;
+                }
+            }
+            console.error('HTB API fetch error: all endpoints failed');
+            container.innerHTML = '<p class="opacity-70 text-sm">HTB stats could not be loaded (CORS or API error).</p>';
+        }
+
+        function renderHTBCard(profile) {
+            const username = profile.name || 'Unknown';
+            const points = profile.points ?? '-';
+            const systemOwns = profile.system_owns ?? '-';
+            const userOwns = profile.user_owns ?? '-';
+            const rank = profile.rank || '-';
+            const nextRank = profile.next_rank || 'Next Rank';
+            const progressRaw = (typeof profile.current_rank_progress === 'number')
+                ? profile.current_rank_progress
+                : (profile.rank_requirement ? (profile.rank_ownership / profile.rank_requirement) * 100 : 0);
+            const progressPct = Math.max(0, Math.min(100, Math.round(progressRaw)));
+
+            const container = document.getElementById('htb-stats-custom');
+            container.innerHTML = `
+                <div class="rounded-xl border border-white/10 p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="bg-green-600/20 text-green-300 px-3 py-1 rounded-full text-xs font-semibold">HTB</div>
+                            <h3 class="text-xl font-semibold">
+                                <a href="https://app.hackthebox.com/public/users/${HTB_ID}" target="_blank" rel="noopener" class="hover:underline">
+                                    ${username}
+                                </a>
+                            </h3>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm opacity-70">Rank</div>
+                            <div class="font-semibold">${rank}</div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+                        <div class="card-dark border rounded-lg p-3">
+                            <div class="text-xs opacity-70 mb-1">Points</div>
+                            <div class="text-lg font-semibold flex items-center gap-2"><i class="fas fa-brain text-green-300"></i>${points}</div>
+                        </div>
+                        <div class="card-dark border rounded-lg p-3">
+                            <div class="text-xs opacity-70 mb-1">System Owns</div>
+                            <div class="text-lg font-semibold flex items-center gap-2"><i class="fas fa-desktop text-green-300"></i>${systemOwns}</div>
+                        </div>
+                        <div class="card-dark border rounded-lg p-3">
+                            <div class="text-xs opacity-70 mb-1">User Owns</div>
+                            <div class="text-lg font-semibold flex items-center gap-2"><i class="fas fa-user-ninja text-green-300"></i>${userOwns}</div>
+                        </div>
+                    </div>
+                    <div class="mb-1 flex items-center justify-between">
+                        <div class="text-sm opacity-70">Progress to ${nextRank}</div>
+                        <div class="text-sm opacity-70">${progressPct}%</div>
+                    </div>
+                    <div class="w-full h-2 bg-neutral-800 rounded-full overflow-hidden">
+                        <div class="h-full bg-green-500" style="width: ${progressPct}%"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        fetchHTBStats();
+    </script>
+</body>
+</html>
